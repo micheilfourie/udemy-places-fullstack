@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+body {
+    color:var(--color-neutral-800)
+}
