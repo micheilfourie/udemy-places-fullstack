@@ -6,18 +6,15 @@ const Modal = ({ coordinates, isModalOpen, handleCloseModal, title }) => {
   }
 
   const { lat, lng } = coordinates;
-
   const googleMapsHref = `https://maps.google.com/maps?q=${lat},${lng}&output=embed`;
-
-  console.log(googleMapsHref);
 
   return (
     <>
-      <div className="fixed flex flex-col items-center justify-center top-1/2 left-1/2 z-50 h-[70%] w-[90%] max-w-screen-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-8">
+      <div className="fixed top-1/2 left-1/2 z-50 flex h-[70%] w-[90%] max-w-screen-lg -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-lg bg-white p-8">
         <div className="mb-8 w-full text-center text-2xl font-semibold">
           {title}
         </div>
-        <div className="h-full w-full mb-8">
+        <div className="mb-8 h-full w-full">
           <iframe
             src={googleMapsHref}
             width="100%"
@@ -26,9 +23,10 @@ const Modal = ({ coordinates, isModalOpen, handleCloseModal, title }) => {
             loading="lazy"
           ></iframe>
         </div>
-        
-          <Button buttonStyle="danger" action={handleCloseModal}>Close Map</Button>
-        
+
+        <Button buttonStyle="danger" action={handleCloseModal}>
+          Close Map
+        </Button>
       </div>
 
       <div

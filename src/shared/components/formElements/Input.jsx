@@ -1,0 +1,105 @@
+import { useState } from "react";
+import {
+  validateLength,
+  validateLongitude,
+  validateLatitude,
+} from "../../util/inputValidation";
+
+const Input = ({ type, id, label, placeholder, state, setState }) => {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const validateInput = (id, value) => {
+    switch (id) {
+      case "title":
+      case "address":
+        return [
+          validateLength(value, 3, 50),
+          `Please enter a ${id} between 3 and 50 characters.`,
+        ];
+      case "description":
+        return [
+          validateLength(value, 3, 200),
+          "Please enter a description between 3 and 200 characters.",
+        ];
+      case "latitude":
+        return [validateLatitude(value), "Please enter a valid latitude."];
+      case "longitude":
+        return [validateLongitude(value), "Please enter a valid longitude."];
+      default:
+        return [true, ""];
+    }
+  };
+
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+
+    let isValid = state.isValid;
+    let message = errorMessage;
+
+    if (state.isTouched) {
+      [isValid, message] = validateInput(id, newValue);
+      setErrorMessage(isValid ? "" : message);
+    }
+
+    setState({
+      value: newValue,
+      isTouched: state.isTouched,
+      isValid,
+    });
+  };
+
+  const handleBlur = () => {
+    const [isValid, message] = validateInput(id, state.value);
+    setErrorMessage(isValid ? "" : message);
+    setState({
+      ...state,
+      isTouched: true,
+      isValid,
+    });
+  };
+
+  const inputClass = `rounded-lg p-2 outline-0 ${
+    state.isTouched && !state.isValid
+      ? "border border-red-500 bg-red-50"
+      : "border border-neutral-200 bg-gray-100"
+  }`;
+
+  const inputElement =
+    type === "text" || type === "number" ? (
+      <input
+        type={type}
+        id={id}
+        value={state.value}
+        placeholder={placeholder}
+        required
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className={inputClass}
+        aria-invalid={state.isTouched && !state.isValid}
+      />
+    ) : (
+      <textarea
+        id={id}
+        value={state.value}
+        rows={5}
+        placeholder={placeholder}
+        required
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className={`resize-none ${inputClass}`}
+        aria-invalid={state.isTouched && !state.isValid}
+      />
+    );
+
+  return (
+    <div className="mb-4 flex w-full flex-col">
+      <label htmlFor={id} className="mb-2">{`${label}:`}</label>
+      {inputElement}
+      {state.isTouched && !state.isValid && (
+        <p className="mt-1 text-sm text-red-500">{errorMessage}</p>
+      )}
+    </div>
+  );
+};
+
+export default Input;
