@@ -70,7 +70,7 @@ const NewPlace = () => {
               label="Latitude"
               state={latitude}
               setState={setLatitude}
-              placeholder="Latitude"
+              placeholder="40.7128"
             />
 
             <Input
@@ -79,7 +79,7 @@ const NewPlace = () => {
               label="Longitude"
               state={longitude}
               setState={setLongitude}
-              placeholder="Longitude"
+              placeholder="-74.0060"
             />
           </div>
 

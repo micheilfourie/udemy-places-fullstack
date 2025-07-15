@@ -21,4 +21,6 @@ const validateLongitude = (value) => {
   );
 };
 
-export { validateLength, validateLongitude, validateLatitude };
+const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
+export { validateLength, validateLongitude, validateLatitude, validateEmail };

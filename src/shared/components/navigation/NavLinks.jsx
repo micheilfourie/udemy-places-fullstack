@@ -13,7 +13,7 @@ const NavLinks = ({direction = "row"}) => {
             <NavLink to={"/places/new"} className={({isActive}) => isActive ? "text-blue-500" : ""}>Add Place</NavLink>
         </li>
         <li>
-            <NavLink to={"/auth"} className={({isActive}) => isActive ? "text-blue-500" : ""}>Authenticate</NavLink>
+            <NavLink to={"/auth"} className={({isActive}) => isActive ? "text-blue-500" : ""}>Sign Up</NavLink>
         </li>
     </ul>
   );

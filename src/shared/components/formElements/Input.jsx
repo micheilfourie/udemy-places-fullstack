@@ -3,6 +3,7 @@ import {
   validateLength,
   validateLongitude,
   validateLatitude,
+  validateEmail,
 } from "../../util/inputValidation";
 
 const Input = ({ type, id, label, placeholder, state, setState }) => {
@@ -22,9 +23,27 @@ const Input = ({ type, id, label, placeholder, state, setState }) => {
           "Please enter a description between 3 and 200 characters.",
         ];
       case "latitude":
-        return [validateLatitude(value), "Please enter a valid latitude."];
+        return [
+          validateLatitude(value),
+          "Please enter a valid latitude in decimal degrees.",
+        ];
       case "longitude":
-        return [validateLongitude(value), "Please enter a valid longitude."];
+        return [
+          validateLongitude(value),
+          "Please enter a valid longitude in decimal degrees.",
+        ];
+      case "name":
+        return [
+          validateLength(value, 3, 50),
+          "Please enter a name between 3 and 50 characters.",
+        ];
+      case "email":
+        return [validateEmail(value), "Please enter a valid email address."];
+      case "password":
+        return [
+          validateLength(value, 6, 50),
+          "Please enter a password at least 6 characters in length.",
+        ];
       default:
         return [true, ""];
     }
@@ -65,19 +84,7 @@ const Input = ({ type, id, label, placeholder, state, setState }) => {
   }`;
 
   const inputElement =
-    type === "text" || type === "number" ? (
-      <input
-        type={type}
-        id={id}
-        value={state.value}
-        placeholder={placeholder}
-        required
-        onChange={handleChange}
-        onBlur={handleBlur}
-        className={inputClass}
-        aria-invalid={state.isTouched && !state.isValid}
-      />
-    ) : (
+    type === "textarea" ? (
       <textarea
         id={id}
         value={state.value}
@@ -89,10 +96,22 @@ const Input = ({ type, id, label, placeholder, state, setState }) => {
         className={`resize-none ${inputClass}`}
         aria-invalid={state.isTouched && !state.isValid}
       />
+    ) : (
+      <input
+        type={type}
+        id={id}
+        value={state.value}
+        placeholder={placeholder}
+        required
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className={inputClass}
+        aria-invalid={state.isTouched && !state.isValid}
+      />
     );
 
   return (
-    <div className="mb-4 flex w-full flex-col">
+    <div className="mb-2 flex w-full flex-col">
       <label htmlFor={id} className="mb-2 font-semibold">{`${label}:`}</label>
       {inputElement}
       {state.isTouched && !state.isValid && (
