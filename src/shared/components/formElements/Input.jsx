@@ -93,7 +93,7 @@ const Input = ({ type, id, label, placeholder, state, setState }) => {
 
   return (
     <div className="mb-4 flex w-full flex-col">
-      <label htmlFor={id} className="mb-2">{`${label}:`}</label>
+      <label htmlFor={id} className="mb-2 font-semibold">{`${label}:`}</label>
       {inputElement}
       {state.isTouched && !state.isValid && (
         <p className="mt-1 text-sm text-red-500">{errorMessage}</p>

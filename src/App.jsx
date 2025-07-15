@@ -3,6 +3,7 @@ import Users from "./user/pages/Users";
 import NewPlace from "./places/pages/NewPlace";
 import MainHeader from "./shared/components/navigation/MainHeader";
 import UserPlaces from "./places/pages/UserPlaces";
+import UpdatePlace from "./places/pages/UpdatePlace";
 
 function App() {
 
@@ -11,8 +12,9 @@ function App() {
     <MainHeader/>
     <Routes>
       <Route path="/" element={<Users />} />
-      <Route path="/places/new" element={<NewPlace />} />
       <Route path="/:userId/places" element={<UserPlaces />} />
+      <Route path="/places/new" element={<NewPlace />} />
+      <Route path="/places/:placeId" element={<UpdatePlace />} />
       {/* <Route path="*" element={<Navigate to="/" />} /> */}
     </Routes>
     </>

@@ -3,14 +3,15 @@ import Button from "../../shared/components/formElements/Button";
 import { useState } from "react";
 
 const NewPlace = () => {
-  const [title, setTitle] = useState({ value: "", isValid: false, isTouched: false });
-  const [address, setAddress] = useState({ value: "", isValid: false, isTouched: false });
-  const [latitude, setLatitude] = useState({ value: "", isValid: false, isTouched: false });
-  const [longitude, setLongitude] = useState({ value: "", isValid: false, isTouched: false });
-  const [description, setDescription] = useState({ value: "", isValid: false, isTouched: false });
 
-  // const coordinates = `${latitude.value},${longitude.value}`;
+  const defaultState = { value: "", isValid: false, isTouched: false };
 
+  const [title, setTitle] = useState(defaultState);
+  const [address, setAddress] = useState(defaultState);
+  const [latitude, setLatitude] = useState(defaultState);
+  const [longitude, setLongitude] = useState(defaultState);
+  const [description, setDescription] = useState(defaultState);
+  
   const handleAddPlace = (e) => {
     e.preventDefault();
 
@@ -22,16 +23,16 @@ const NewPlace = () => {
     description.isValid
       ? (console.log(title.value, address.value, `${latitude.value},${longitude.value}`, description.value), clearInputs())
       : alert(
-          "Please fill in all the fields and enter valid coordinates (latitude and longitude).",
+          "Please fill in all the fields before submitting.",
         );
   };
 
   const clearInputs = () => {
-    setTitle({ value: "", isValid: false, isTouched: false });
-    setAddress({ value: "", isValid: false, isTouched: false });
-    setLatitude({ value: "", isValid: false, isTouched: false });
-    setLongitude({ value: "", isValid: false, isTouched: false });
-    setDescription({ value: "", isValid: false, isTouched: false });
+    setTitle(defaultState);
+    setAddress(defaultState);
+    setLatitude(defaultState);
+    setLongitude(defaultState);
+    setDescription(defaultState);
   };
 
   return (
@@ -91,7 +92,7 @@ const NewPlace = () => {
             setState={setDescription}
           />
 
-          <Button type="submit">Add Place</Button>
+          <Button type="submit">Submit</Button>
         </form>
       </div>
     </div>
