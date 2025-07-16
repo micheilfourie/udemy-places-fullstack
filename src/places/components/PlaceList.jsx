@@ -3,7 +3,7 @@ import PlaceItem from "./PlaceItem";
 const PlaceList = ({ items }) => {
 
   if (items.length === 0) {
-    return <h1 className="mt-[75px] text-2xl font-semibold text-center pt-4">No places found</h1>;
+    return <h1 className="text-2xl font-semibold text-center pt-4">No places found</h1>;
   }
 
   return (

@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import Input from "../../shared/components/formElements/Input";
 import Button from "../../shared/components/formElements/Button";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../shared/context/authContext";
 
 const Auth = () => {
+
+  const {login} = useContext(AuthContext);
+
   const [email, setEmail] = useState({
     value: "",
     isValid: false,
@@ -26,7 +30,7 @@ const Auth = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     email.isValid && password.isValid
-      ? (console.log(email.value, password.value), navigate("/"))
+      ? (console.log(email.value, password.value), navigate("/"), login())
       : alert("Please fill in all the fields before submitting.");
   };
 

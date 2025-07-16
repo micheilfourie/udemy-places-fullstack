@@ -2,7 +2,8 @@ import Card from "../../shared/components/ui/Card";
 import Button from "../../shared/components/formElements/Button";
 import Modal from "../../shared/components/ui/Modal";
 import ReactDOM from "react-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../shared/context/authContext";
 
 const PlaceItem = ({
   id,
@@ -15,6 +16,8 @@ const PlaceItem = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
+
+  const { userId } = useContext(AuthContext);
 
   const handleShowModal = (type) => {
     setModalType(type);
@@ -102,7 +105,7 @@ const PlaceItem = ({
             </div>
             <div className="flex items-center gap-2 p-4">
               <Button action={() => handleShowModal("map")}>View on map</Button>
-              {creatorId === "u1" && (
+              {creatorId === userId && (
                 <>
                   <Button link={`/places/${id}`} buttonStyle="caution">
                     Edit

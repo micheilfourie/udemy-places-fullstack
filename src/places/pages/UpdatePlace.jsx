@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import places from '../../tempData.js';
+import { places } from "../../tempData.js";
 import Input from "../../shared/components/formElements/Input";
 import Button from "../../shared/components/formElements/Button";
 import { useNavigate } from "react-router-dom";
