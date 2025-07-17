@@ -2,8 +2,8 @@ import { useState } from "react";
 import { AuthContext } from "./authContext";
 
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userId, setUserId] = useState("u4");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState("");
 
   const login = () => setIsLoggedIn(true);
   const logout = () => setIsLoggedIn(false);
