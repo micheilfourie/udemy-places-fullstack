@@ -1,8 +1,12 @@
 import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 import HttpError from "./models/http-error.js";
 import placesRoutes from "./routes/places-routes.js";
 import usersRoutes from "./routes/users-routes.js";
+
+dotenv.config();
 
 const app = express();
 
@@ -23,4 +27,11 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+const mongodb = process.env.MONGODB_URI;
+
+mongoose
+  .connect(mongodb)
+  .then(() => {
+    app.listen(5000, () => console.log("Server running on port 5000"));
+  })
+  .catch((err) => console.log(err));

@@ -1,100 +1,83 @@
 import HttpError from "../models/http-error.js";
-import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
+import User from "../models/user.js";
 
-const users = [
-  {
-    id: "u1",
-    name: "Amy Fisher",
-    email: "amy@example.com",
-    password: "password",
-    image:
-      "https://images.pexels.com/photos/27765567/pexels-photo-27765567.jpeg",
-    places: 2,
-  },
-  {
-    id: "u2",
-    name: "Mark Zuckerberg",
-    email: "amy@example.com",
-    password: "password",
-    image: "",
-    places: 1,
-  },
-  {
-    id: "u3",
-    name: "Sam Smith",
-    email: "amy@example.com",
-    password: "password",
-    image: "",
-    places: 1,
-  },
-];
+const getUsers = async (req, res, next) => {
+  let users;
 
-const getUsers = (req, res, next) => {
-  const userList = users.map((u) => ({
-    id: u.id,
-    name: u.name,
-    image: u.image,
-    places: u.places,
-  }));
-
-  if (!userList) {
-    throw new HttpError("No users found", 404);
+  try {
+    users = await User.find({}, "-password");
+  } catch (error) {
+    const err = new HttpError("Fetching users failed, please try again", 500);
+    return next(err);
   }
 
-  res.json({ users: userList });
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
-const addUser = (req, res, next) => {
+const addUser = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data", 422);
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
   }
 
   const { name, email, password } = req.body;
+  let user;
 
-  if (!name || !email || !password) {
-    throw new HttpError("Invalid user input recieved", 422);
+  try {
+    user = await User.findOne({ email: email });
+  } catch (error) {
+    const err = new HttpError("Signing up failed, please try again", 500);
+    return next(err);
   }
 
-  const existingUser = users.find((u) => u.email === email);
-
-  if (existingUser) {
-    throw new HttpError("User already exists", 422);
+  if (user) {
+    return next(new HttpError("User already exists", 422));
   }
 
-  const user = {
-    id: uuidv4(),
+  const newUser = new User({
     name,
     email,
-    password, // need to hash
-    places: 0,
-    image: "",
-  };
+    image:
+      "https://images.pexels.com/photos/27765567/pexels-photo-27765567.jpeg",
+    password,
+    places: []
+  });
 
-  users.push(user);
+  try {
+    await newUser.save();
+  } catch (error) {
+    const err = new HttpError("Signing up failed, please try again", 500);
+    return next(err);
+  }
 
   res.json({ message: "User added!" });
 };
 
-const loginUser = (req, res, next) => {
+const loginUser = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
+  }
+
   const { email, password } = req.body;
+  let user;
 
-  if (!email || !password) {
-    throw new HttpError("Invalid user input recieved", 422);
+  try {
+    user = await User.findOne({ email: email });
+  } catch (error) {
+    const err = new HttpError("Login failed, please try again", 500);
+    return next(err);
   }
 
-  const user = users.find((u) => u.email === email);
-
-  if (!user) {
-    throw new HttpError("User Not Found", 422);
-  }
-
-  const passwordIsValid = password === user.password;
-
-  if (!passwordIsValid) {
-    throw new HttpError("Incorrect password", 422);
+  if (!user || user.password !== password) {
+    return next(new HttpError("Invalid credentials, could not login", 401));
   }
 
   res.json({ message: "Logged in!" });
