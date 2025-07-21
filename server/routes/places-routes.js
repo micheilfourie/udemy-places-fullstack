@@ -16,7 +16,6 @@ router.get("/user/:uId", getPlacesByUserId);
 router.post(
   "/",
   check("title").isLength({ min: 3, max: 50 }),
-  check("address").isLength({ min: 3, max: 50 }),
   check("description").isLength({ min: 3, max: 200 }),
   createPlace
 );

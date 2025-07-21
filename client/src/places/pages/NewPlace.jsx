@@ -34,11 +34,20 @@ const NewPlace = () => {
     isTouched: false,
   });
 
+  const [showCoordinates, setShowCoordinates] = useState(false);
+
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const handleToggleCoordinates = () => {
+    setShowCoordinates(!showCoordinates);
+    setAddress({ value: "", isValid: false, isTouched: false });
+    setLatitude({ value: "", isValid: false, isTouched: false });
+    setLongitude({ value: "", isValid: false, isTouched: false });
+  };
 
   const handleCloseModal = () => {
     clearError();
@@ -47,31 +56,45 @@ const NewPlace = () => {
   const handleAddPlace = (e) => {
     e.preventDefault();
 
+    if (showCoordinates && (!latitude.isValid || !longitude.isValid)) {
+      return;
+    }
+
     if (
-      !title.isValid ||
-      !address.isValid ||
-      !latitude.isValid ||
-      !longitude.isValid ||
-      !description.isValid
+      !showCoordinates &&
+      (!title.isValid || !address.isValid || !description.isValid)
     ) {
       return;
     }
 
     const addPlace = async () => {
-      try {
-        const res = await sendRequest(
-          "http://localhost:5000/api/places",
-          "POST",
-          JSON.stringify({
+      const data = showCoordinates
+        ? {
             title: title.value,
-            address: address.value,
+            address: "",
             coordinates: {
               lat: latitude.value,
               lng: longitude.value,
             },
             description: description.value,
             creator: auth.userId,
-          }),
+          }
+        : {
+            title: title.value,
+            address: address.value,
+            coordinates: {
+              lat: 0,
+              lng: 0,
+            },
+            description: description.value,
+            creator: auth.userId,
+          };
+
+      try {
+        const res = await sendRequest(
+          "http://localhost:5000/api/places",
+          "POST",
+          JSON.stringify(data),
           {
             "Content-Type": "application/json",
           },
@@ -83,7 +106,7 @@ const NewPlace = () => {
 
         navigate(`/${auth.userId}/places`);
 
-      // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
       } catch (error) {
         return;
       }
@@ -123,37 +146,57 @@ const NewPlace = () => {
                 placeholder="Enter Title"
               />
 
-              <Input
-                isLoading={isLoading}
-                type="text"
-                id="address"
-                label="Address"
-                state={address}
-                setState={setAddress}
-                placeholder="Enter Address"
-              />
+              {!showCoordinates ? (
+                <>
+                  <Input
+                    isLoading={isLoading}
+                    type="text"
+                    id="address"
+                    label="Address"
+                    state={address}
+                    setState={setAddress}
+                    placeholder="Enter Address"
+                  />
+                  <p
+                    onClick={handleToggleCoordinates}
+                    className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
+                  >
+                    Add with Coordinates?
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-4 max-[500px]:flex-col">
+                    <Input
+                      isOptional
+                      isLoading={isLoading}
+                      type="number"
+                      id="latitude"
+                      label="Latitude"
+                      state={latitude}
+                      setState={setLatitude}
+                      placeholder="40.7128"
+                    />
 
-              <div className="flex gap-4 max-[500px]:flex-col">
-                <Input
-                  isLoading={isLoading}
-                  type="number"
-                  id="latitude"
-                  label="Latitude"
-                  state={latitude}
-                  setState={setLatitude}
-                  placeholder="40.7128"
-                />
-
-                <Input
-                  isLoading={isLoading}
-                  type="number"
-                  id="longitude"
-                  label="Longitude"
-                  state={longitude}
-                  setState={setLongitude}
-                  placeholder="-74.0060"
-                />
-              </div>
+                    <Input
+                      isOptional
+                      isLoading={isLoading}
+                      type="number"
+                      id="longitude"
+                      label="Longitude"
+                      state={longitude}
+                      setState={setLongitude}
+                      placeholder="-74.0060"
+                    />
+                  </div>
+                  <p
+                    onClick={handleToggleCoordinates}
+                    className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
+                  >
+                    Add with Address?
+                  </p>
+                </>
+              )}
 
               <Input
                 isLoading={isLoading}

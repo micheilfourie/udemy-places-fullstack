@@ -1,10 +1,11 @@
 import Card from "../../shared/components/ui/Card";
 import Button from "../../shared/components/formElements/Button";
-import Modal from "../../shared/components/ui/Modal";
 import { useState, useContext } from "react";
 import { AuthContext } from "../../shared/context/authContext";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/ui/ErrorModal";
+import MapModal from "../../shared/components/ui/MapModal";
+import DeleteModal from "../../shared/components/ui/DeleteModal";
 
 const PlaceItem = ({
   id,
@@ -62,60 +63,29 @@ const PlaceItem = ({
     deletePlace();
   };
 
-  const { lat, lng } = coordinates;
-  const googleMapsHref = `https://maps.google.com/maps?q=${lat},${lng}&output=embed`;
-
-  const content =
-    modalType === "map" ? (
-      <div className="fixed top-1/2 left-1/2 z-50 flex h-[70%] w-[95%] max-w-screen-lg -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-lg bg-white py-4">
-        <div className="mb-4 w-full text-center text-2xl font-semibold">
-          {title}
-        </div>
-
-        <div className="mb-4 h-full w-full">
-          <iframe
-            src={googleMapsHref}
-            width="100%"
-            height="100%"
-            allowFullScreen=""
-          ></iframe>
-        </div>
-
-        <Button buttonStyle="danger" action={handleCloseModal}>
-          Close Map
-        </Button>
-      </div>
-    ) : (
-      <div className="fixed top-1/2 left-1/2 z-50 flex w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col rounded-lg bg-white p-4">
-        <div className="mb-4 w-full text-2xl font-semibold">
-          Delete {title}?
-        </div>
-
-        <p>
-          Are you sure you want to delete this place? This action cannot be
-          undone.
-        </p>
-
-        <div className="mt-5 grid w-full grid-cols-2 gap-4">
-          <Button buttonStyle="danger" action={handleDeletePlace}>
-            Delete
-          </Button>
-
-          <Button action={handleCloseModal}>Cancel</Button>
-        </div>
-      </div>
-    );
-
   return (
     <>
       {error && (
         <ErrorModal error={error} handleCloseModal={handleCloseErrorModal} />
       )}
 
-      <Modal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal}>
-        {content}
-      </Modal>
-      
+      {modalType === "map" ? (
+        <MapModal
+          title={title}
+          coordinates={coordinates}
+          address={address}
+          handleCloseModal={handleCloseModal}
+          isModalOpen={isModalOpen}
+        />
+      ) : (
+        <DeleteModal
+          title={title}
+          handleDeletePlace={handleDeletePlace}
+          handleCloseModal={handleCloseModal}
+          isModalOpen={isModalOpen}
+        ></DeleteModal>
+      )}
+
       <li>
         <Card>
           <div className="w-full">
@@ -129,7 +99,7 @@ const PlaceItem = ({
 
             <div className="mt-4 p-4">
               <h2 className="text-2xl font-semibold">{title}</h2>
-              <h3 className="mt-1 text-sm text-neutral-500">{address}</h3>
+              <h3 className="mt-1 text-sm text-neutral-500">{address === "" ? `${coordinates.lat}, ${coordinates.lng}` : address}</h3>
               <p className="mt-4">{description}</p>
             </div>
 

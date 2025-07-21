@@ -62,6 +62,11 @@ const UpdatePlace = () => {
     e.preventDefault();
 
     const editPlace = async () => {
+
+      if (!title.isValid || !description.isValid) {
+        return;
+      }
+
       try {
         const res = await sendRequest(
           `http://localhost:5000/api/places/${placeId}`,
