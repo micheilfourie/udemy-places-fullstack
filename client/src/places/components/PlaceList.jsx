@@ -1,6 +1,6 @@
 import PlaceItem from "./PlaceItem";
 
-const PlaceList = ({ items }) => {
+const PlaceList = ({ items, setLoadedPlaces }) => {
 
   if (items.length === 0) {
     return <h1 className="text-2xl font-semibold text-center pt-4">No places found</h1>;
@@ -20,6 +20,7 @@ const PlaceList = ({ items }) => {
             description={place.description}
             creatorId={place.creator}
             coordinates={place.location}
+            setLoadedPlaces={setLoadedPlaces}
           />
         ))}
       </ul>

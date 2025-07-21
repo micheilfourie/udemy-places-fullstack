@@ -3,7 +3,7 @@ import UserItem from "./UserItem";
 const UsersList = ({ users }) => {
   if (users.length === 0) {
     return (
-      <h1 className="text-center text-2xl font-semibold">No users found</h1>
+      <h1 className="text-center text-2xl font-semibold pt-4">No users found</h1>
     );
   }
 

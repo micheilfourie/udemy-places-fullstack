@@ -7,7 +7,7 @@ const Avatar = ({ image, width = 50, name }) => {
           className={`flex items-center justify-center text-xl font-semibold rounded-full bg-gray-200`}
           style={{ width: `${width}px`, height: `${width}px` }}
         >
-          {name[0]}
+          {name[0].toUpperCase()}
         </div>
       ) : (
         <img

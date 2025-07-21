@@ -6,7 +6,15 @@ import {
   validateEmail,
 } from "../../util/inputValidation";
 
-const Input = ({ type, id, label, placeholder, state, setState }) => {
+const Input = ({
+  type,
+  id,
+  label,
+  placeholder,
+  state,
+  setState,
+  isLoading = false,
+}) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const validateInput = (id, value) => {
@@ -93,7 +101,7 @@ const Input = ({ type, id, label, placeholder, state, setState }) => {
         required
         onChange={handleChange}
         onBlur={handleBlur}
-        className={`resize-none ${inputClass}`}
+        className={`resize-none ${inputClass} ${isLoading && "pointer-events-none"}`}
         aria-invalid={state.isTouched && !state.isValid}
       />
     ) : (
@@ -105,7 +113,7 @@ const Input = ({ type, id, label, placeholder, state, setState }) => {
         required
         onChange={handleChange}
         onBlur={handleBlur}
-        className={inputClass}
+        className={`${inputClass} ${isLoading && "pointer-events-none"}`}
         aria-invalid={state.isTouched && !state.isValid}
       />
     );

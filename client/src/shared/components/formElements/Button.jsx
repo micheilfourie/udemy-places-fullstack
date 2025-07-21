@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const Button = ({ children, buttonStyle = "default", action = () => {}, link }) => {
+const Button = ({ children, buttonStyle = "default", action = () => {}, link, disabled }) => {
 
   const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ const Button = ({ children, buttonStyle = "default", action = () => {}, link }) 
   return (
     <button
       onClick={link ? () => navigate(link) : action}
-      className={`${buttonStyle === "danger" ? dangerStyle : buttonStyle === "caution" ? cautionStyle : defaultStyle} text-nowrap cursor-pointer rounded-lg px-4 py-2 uppercase transition-all duration-300 ease-in-out`}
+      className={`flex justify-center items-center ${disabled && "pointer-events-none"} ${buttonStyle === "danger" ? dangerStyle : buttonStyle === "caution" ? cautionStyle : defaultStyle} text-nowrap cursor-pointer rounded-lg px-4 py-2 uppercase transition-all duration-300 ease-in-out`}
     >
       {children}
     </button>

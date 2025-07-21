@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import Card from "../../shared/components/ui/Card";
 
 const UserItem = ({ id, name, image, places }) => {
+
+  const placesLength = places.length
+
   return (
     <li className="my-4">
       <Link to={`/${id}/places`}>
@@ -12,7 +15,7 @@ const UserItem = ({ id, name, image, places }) => {
             <div>
               <h2 className="text-xl">{name}</h2>
               <p>
-                {places} {places === 1 ? "Place" : "Places"}
+                {placesLength} {placesLength === 1 ? "Place" : "Places"}
               </p>
             </div>
           </div>

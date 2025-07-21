@@ -1,9 +1,10 @@
 import Card from "../../shared/components/ui/Card";
 import Button from "../../shared/components/formElements/Button";
 import Modal from "../../shared/components/ui/Modal";
-import ReactDOM from "react-dom";
 import { useState, useContext } from "react";
 import { AuthContext } from "../../shared/context/authContext";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+import ErrorModal from "../../shared/components/ui/ErrorModal";
 
 const PlaceItem = ({
   id,
@@ -13,11 +14,14 @@ const PlaceItem = ({
   description,
   creatorId,
   coordinates,
+  setLoadedPlaces,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
   const { userId } = useContext(AuthContext);
+
+  const { error, sendRequest, clearError } = useHttpClient();
 
   const handleShowModal = (type) => {
     setModalType(type);
@@ -28,9 +32,34 @@ const PlaceItem = ({
     setIsModalOpen(false);
   };
 
+  const handleCloseErrorModal = () => {
+    clearError();
+  };
+
   const handleDeletePlace = () => {
-    console.log("Deleting place...");
-    handleCloseModal();
+    const deletePlace = async () => {
+      try {
+        const res = await sendRequest(
+          `http://localhost:5000/api/places/${id}`,
+          "DELETE",
+        );
+
+        if (!res) {
+          throw new Error();
+        }
+
+        handleCloseModal();
+        setLoadedPlaces((prevPlaces) =>
+          prevPlaces.filter((place) => place.id !== id),
+        );
+
+        // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        return;
+      }
+    };
+
+    deletePlace();
   };
 
   const { lat, lng } = coordinates;
@@ -49,7 +78,6 @@ const PlaceItem = ({
             width="100%"
             height="100%"
             allowFullScreen=""
-            loading="lazy"
           ></iframe>
         </div>
 
@@ -80,14 +108,14 @@ const PlaceItem = ({
 
   return (
     <>
-      {ReactDOM.createPortal(
-        <Modal
-          content={content}
-          isModalOpen={isModalOpen}
-          handleCloseModal={handleCloseModal}
-        />,
-        document.getElementById("modal-hook"),
+      {error && (
+        <ErrorModal error={error} handleCloseModal={handleCloseErrorModal} />
       )}
+
+      <Modal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal}>
+        {content}
+      </Modal>
+      
       <li>
         <Card>
           <div className="w-full">
@@ -98,11 +126,13 @@ const PlaceItem = ({
                 className="h-[300px] w-full object-cover"
               />
             </div>
+
             <div className="mt-4 p-4">
               <h2 className="text-2xl font-semibold">{title}</h2>
               <h3 className="mt-1 text-sm text-neutral-500">{address}</h3>
               <p className="mt-4">{description}</p>
             </div>
+
             <div className="flex items-center gap-2 p-4">
               <Button action={() => handleShowModal("map")}>View on map</Button>
               {creatorId === userId && (

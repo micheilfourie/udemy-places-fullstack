@@ -1,15 +1,20 @@
-import Button from "../formElements/Button";
 import Backdrop from "./Backdrop";
+import ReactDOM from "react-dom";
 
-const Modal = ({ content, isModalOpen, handleCloseModal }) => {
+const Modal = ({ children, isModalOpen, handleCloseModal }) => {
   if (!isModalOpen) {
     return;
   }
 
   return (
     <>
-      {content}
-      <Backdrop action={handleCloseModal} zIndex={40} />
+      {ReactDOM.createPortal(
+        <>
+          {children}
+          <Backdrop action={handleCloseModal} zIndex={40} />
+        </>,
+        document.getElementById("modal-hook"),
+      )}
     </>
   );
 };

@@ -20,7 +20,7 @@ const addUser = async (req, res, next) => {
 
   if (!errors.isEmpty()) {
     return next(
-      new HttpError("Invalid inputs passed, please check your data", 422)
+      new HttpError("Invalid inputs passed, please check your data.", 422)
     );
   }
 
@@ -30,31 +30,30 @@ const addUser = async (req, res, next) => {
   try {
     user = await User.findOne({ email: email });
   } catch (error) {
-    const err = new HttpError("Signing up failed, please try again", 500);
+    const err = new HttpError("Signup failed, please try again.", 500);
     return next(err);
   }
 
   if (user) {
-    return next(new HttpError("User already exists", 422));
+    return next(new HttpError("User already exists.", 422));
   }
 
   const newUser = new User({
     name,
     email,
-    image:
-      "https://images.pexels.com/photos/27765567/pexels-photo-27765567.jpeg",
+    image: "",
     password,
-    places: []
+    places: [],
   });
 
   try {
-    await newUser.save();
+     await newUser.save();
   } catch (error) {
-    const err = new HttpError("Signing up failed, please try again", 500);
+    const err = new HttpError("Signup failed, please try again.", 500);
     return next(err);
   }
 
-  res.json({ message: "User added!" });
+  res.json({ message: "User added!", userId: newUser.toObject({ getters: true }).id });
 };
 
 const loginUser = async (req, res, next) => {
@@ -80,7 +79,7 @@ const loginUser = async (req, res, next) => {
     return next(new HttpError("Invalid credentials, could not login", 401));
   }
 
-  res.json({ message: "Logged in!" });
+  res.json({ message: "Logged in!", userId: user.toObject({ getters: true }).id });
 };
 
 export { getUsers, addUser, loginUser };

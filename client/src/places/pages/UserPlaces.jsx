@@ -1,14 +1,41 @@
 import PlaceList from "../components/PlaceList";
 import { useParams } from "react-router-dom";
-import { places } from "../../tempData.js";
+import { useHttpClient } from "../../shared/hooks/http-hook.js";
+import { useState, useEffect } from "react";
+import LoadingSpinner from "../../shared/components/ui/LoadingSpinner";
 
 const UserPlaces = () => {
   const userId = useParams().userId;
-  const filteredPlaces = places.filter((place) => place.creator === userId);
+  const [places, setLoadedPlaces] = useState([]);
+  const { isLoading, sendRequest } = useHttpClient();
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const res = await sendRequest(
+          `http://localhost:5000/api/places/user/${userId}`,
+        );
+
+        setLoadedPlaces(res.places);
+
+        // eslint-disable-next-line no-unused-vars
+      } catch (error) {
+        return;
+      }
+    };
+
+    fetchPlaces();
+  }, [sendRequest, userId, setLoadedPlaces]);
 
   return (
     <div className="min-h-screen bg-gray-100 pt-[75px]">
-      <PlaceList items={filteredPlaces} />
+      {isLoading ? (
+        <div className="mt-4 flex w-full items-center justify-center gap-4">
+          <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
+        </div>
+      ) : (
+        <PlaceList items={places} setLoadedPlaces={setLoadedPlaces} />
+      )}
     </div>
   );
 };
