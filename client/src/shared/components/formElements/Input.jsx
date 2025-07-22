@@ -53,27 +53,25 @@ const Input = ({ type, id, label, placeholder, form, isLoading = false }) => {
   };
 
   const handleChange = (e) => {
-    const newValue = e.target.value;
+  const newValue = e.target.value;
 
-    let isValid = formElement.isValid;
-    let message = errorMessage;
+  const [isValid, message] = validateInput(id, newValue);
 
-    if (formElement.isTouched) {
-      [isValid, message] = validateInput(id, newValue);
-      setErrorMessage(isValid ? "" : message);
-    }
+  updateValue(id, newValue);
+  setFieldValidity(id, isValid);
 
-    updateValue(id, newValue);
-    setFieldValidity(id, isValid);
-  };
-
-  const handleBlur = () => {
-    const [isValid, message] = validateInput(id, formElement.value);
+  if (formElement.isTouched) {
     setErrorMessage(isValid ? "" : message);
+  }
+};
 
-    setFieldValidity(id, isValid);
-    markTouched(id);
-  };
+const handleBlur = () => {
+  markTouched(id);
+
+  const [isValid, message] = validateInput(id, formElement.value);
+  setErrorMessage(isValid ? "" : message);
+  setFieldValidity(id, isValid);
+};
 
   const inputClass = `rounded-lg p-2 outline-0 ${
     formElement.isTouched && errorMessage
