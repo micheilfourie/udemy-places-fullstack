@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useContext } from "react";
 import Input from "../../shared/components/formElements/Input";
 import Button from "../../shared/components/formElements/Button";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook.js";
 import LoadingSpinner from "../../shared/components/ui/LoadingSpinner";
 import { AuthContext } from "../../shared/context/authContext.js";
 import ErrorModal from "../../shared/components/ui/ErrorModal";
+import { useForm } from "../../shared/hooks/form-hook.js";
 
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
@@ -16,16 +17,7 @@ const UpdatePlace = () => {
 
   const auth = useContext(AuthContext);
 
-  const [title, setTitle] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [description, setDescription] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
+  const updatePlaceForm = useForm(["title", "description"]);
 
   useEffect(() => {
     const fetchPlace = async () => {
@@ -38,16 +30,8 @@ const UpdatePlace = () => {
           throw new Error();
         }
 
-        setTitle({
-          value: res.place.title,
-          isValid: true,
-          isTouched: false,
-        });
-        setDescription({
-          value: res.place.description,
-          isValid: true,
-          isTouched: false,
-        });
+        updatePlaceForm.updateValue("title", res.place.title);
+        updatePlaceForm.updateValue("description", res.place.description);
 
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
@@ -63,7 +47,9 @@ const UpdatePlace = () => {
 
     const editPlace = async () => {
 
-      if (!title.isValid || !description.isValid) {
+      const formState = updatePlaceForm.formState;
+
+      if (!formState.title.isValid || !formState.description.isValid) {
         return;
       }
 
@@ -72,8 +58,8 @@ const UpdatePlace = () => {
           `http://localhost:5000/api/places/${placeId}`,
           "PATCH",
           JSON.stringify({
-            title: title.value,
-            description: description.value,
+            title: formState.title.value,
+            description: formState.description.value,
           }),
           {
             "Content-Type": "application/json",
@@ -103,9 +89,9 @@ const UpdatePlace = () => {
     <>
     <ErrorModal error={error} handleCloseModal={handleCloseModal} />
 
-    <div className="flex min-h-screen justify-center bg-gray-100 pt-[75px]">
+    <div className="flex min-h-screen justify-center items-center bg-gray-100 pt-[75px]">
       {isLoading ? (
-        <div className="mt-4">
+        <div>
           <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
         </div>
       ) : (
@@ -123,8 +109,7 @@ const UpdatePlace = () => {
               type="text"
               id="title"
               label="Title"
-              state={title}
-              setState={setTitle}
+              form={updatePlaceForm}
               placeholder="Enter Title"
             />
 
@@ -133,8 +118,7 @@ const UpdatePlace = () => {
               id="description"
               label="Description"
               placeholder="Write a description..."
-              state={description}
-              setState={setDescription}
+              form={updatePlaceForm}
             />
 
             <Button type="submit">Submit</Button>

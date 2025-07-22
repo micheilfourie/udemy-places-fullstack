@@ -6,16 +6,11 @@ import {
   validateEmail,
 } from "../../util/inputValidation";
 
-const Input = ({
-  type,
-  id,
-  label,
-  placeholder,
-  state,
-  setState,
-  isLoading = false,
-}) => {
+const Input = ({ type, id, label, placeholder, form, isLoading = false }) => {
   const [errorMessage, setErrorMessage] = useState("");
+
+  const formElement = form.formState[id];
+  const { updateValue, setFieldValidity, markTouched } = form;
 
   const validateInput = (id, value) => {
     switch (id) {
@@ -60,33 +55,28 @@ const Input = ({
   const handleChange = (e) => {
     const newValue = e.target.value;
 
-    let isValid = state.isValid;
+    let isValid = formElement.isValid;
     let message = errorMessage;
 
-    if (state.isTouched) {
+    if (formElement.isTouched) {
       [isValid, message] = validateInput(id, newValue);
       setErrorMessage(isValid ? "" : message);
     }
 
-    setState({
-      value: newValue,
-      isTouched: state.isTouched,
-      isValid,
-    });
+    updateValue(id, newValue);
+    setFieldValidity(id, isValid);
   };
 
   const handleBlur = () => {
-    const [isValid, message] = validateInput(id, state.value);
+    const [isValid, message] = validateInput(id, formElement.value);
     setErrorMessage(isValid ? "" : message);
-    setState({
-      ...state,
-      isTouched: true,
-      isValid,
-    });
+
+    setFieldValidity(id, isValid);
+    markTouched(id);
   };
 
   const inputClass = `rounded-lg p-2 outline-0 ${
-    state.isTouched && !state.isValid
+    formElement.isTouched && errorMessage
       ? "border border-red-500 bg-red-50"
       : "border border-neutral-200 bg-gray-100"
   }`;
@@ -95,26 +85,24 @@ const Input = ({
     type === "textarea" ? (
       <textarea
         id={id}
-        value={state.value}
+        value={formElement.value}
         rows={5}
         placeholder={placeholder}
         required
         onChange={handleChange}
         onBlur={handleBlur}
         className={`resize-none ${inputClass} ${isLoading && "pointer-events-none"}`}
-        aria-invalid={state.isTouched && !state.isValid}
       />
     ) : (
       <input
         type={type}
         id={id}
-        value={state.value}
+        value={formElement.value}
         placeholder={placeholder}
         required
         onChange={handleChange}
         onBlur={handleBlur}
         className={`${inputClass} ${isLoading && "pointer-events-none"}`}
-        aria-invalid={state.isTouched && !state.isValid}
       />
     );
 
@@ -122,7 +110,7 @@ const Input = ({
     <div className="mb-2 flex w-full flex-col">
       <label htmlFor={id} className="mb-2 font-semibold">{`${label}:`}</label>
       {inputElement}
-      {state.isTouched && !state.isValid && (
+      {formElement.isTouched && !formElement.isValid && (
         <p className="mt-1 text-sm text-red-500">{errorMessage}</p>
       )}
     </div>

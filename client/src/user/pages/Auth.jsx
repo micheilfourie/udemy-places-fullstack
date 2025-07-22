@@ -6,30 +6,16 @@ import { AuthContext } from "../../shared/context/authContext";
 import LoadingSpinner from "../../shared/components/ui/LoadingSpinner";
 import ErrorModal from "../../shared/components/ui/ErrorModal";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import { useForm } from "../../shared/hooks/form-hook";
 
 const Auth = () => {
+  const [isRegister, setIsRegister] = useState(true);
+
   const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
-  const [isRegister, setIsRegister] = useState(true);
-
-  const [email, setEmail] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [password, setPassword] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [name, setName] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
+  const authForm = useForm(["email", "password", "name"]);
 
   const handleCloseModal = () => {
     clearError();
@@ -41,19 +27,23 @@ const Auth = () => {
   };
 
   const handleClearInputs = () => {
-    setEmail({ value: "", isValid: false, isTouched: false });
-    setPassword({ value: "", isValid: false, isTouched: false });
-    setName({ value: "", isValid: false, isTouched: false });
+    authForm.resetFields(["email", "password", "name"]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formState = authForm.formState;
+
     if (error || isLoading) {
       return;
     }
 
-    if (!email.isValid || !password.isValid || (isRegister && !name.isValid)) {
+    if (
+      !formState.email.isValid ||
+      !formState.password.isValid ||
+      (isRegister && !formState.name.isValid)
+    ) {
       return;
     }
 
@@ -66,9 +56,9 @@ const Auth = () => {
         url,
         "POST",
         JSON.stringify({
-          email: email.value,
-          password: password.value,
-          name: name.value,
+          email: formState.email.value,
+          password: formState.password.value,
+          name: formState.name.value,
         }),
         {
           "Content-Type": "application/json",
@@ -90,7 +80,9 @@ const Auth = () => {
 
   return (
     <>
-      {error && <ErrorModal error={error} handleCloseModal={handleCloseModal} />}
+      {error && (
+        <ErrorModal error={error} handleCloseModal={handleCloseModal} />
+      )}
 
       <div className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]">
         <div className="m-4 h-full w-full max-w-[500px] rounded-lg bg-white p-8 shadow-sm">
@@ -109,8 +101,7 @@ const Auth = () => {
                 type="text"
                 id="name"
                 label="Name"
-                state={name}
-                setState={setName}
+                form={authForm}
                 placeholder="Enter Name"
               />
             )}
@@ -120,8 +111,7 @@ const Auth = () => {
               type="email"
               id="email"
               label="Email"
-              state={email}
-              setState={setEmail}
+              form={authForm}
               placeholder="Enter Email"
             />
 
@@ -130,17 +120,18 @@ const Auth = () => {
               type="password"
               id="password"
               label="Password"
-              state={password}
-              setState={setPassword}
+              form={authForm}
               placeholder="Enter Password"
             />
 
             {!isRegister && (
-              <p
-                className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
-              >
-                Forgot Password?
-              </p>
+              <div>
+                <span
+                  className={`cursor-pointer text-center ${isLoading && "pointer-events-none"} text-blue-500 hover:underline`}
+                >
+                  Forgot Password?
+                </span>
+              </div>
             )}
 
             <br />
@@ -153,14 +144,16 @@ const Auth = () => {
               <Button type="submit">{isRegister ? "Sign Up" : "Login"}</Button>
             )}
 
-            <p
-              onClick={handleToggleAuthState}
-              className={`cursor-pointer text-center ${isLoading && "pointer-events-none"} text-blue-500 hover:underline`}
-            >
-              {isRegister
-                ? "Already have an account?"
-                : "Don't have an account?"}
-            </p>
+            <div className="flex items-center justify-center">
+              <span
+                onClick={handleToggleAuthState}
+                className={`cursor-pointer text-center ${isLoading && "pointer-events-none"} text-blue-500 hover:underline`}
+              >
+                {isRegister
+                  ? "Already have an account?"
+                  : "Don't have an account?"}
+              </span>
+            </div>
           </form>
         </div>
       </div>

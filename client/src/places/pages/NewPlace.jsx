@@ -6,47 +6,28 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../shared/context/authContext";
 import LoadingSpinner from "../../shared/components/ui/LoadingSpinner";
 import ErrorModal from "../../shared/components/ui/ErrorModal";
+import { useForm } from "../../shared/hooks/form-hook";
 
 const NewPlace = () => {
-  const [title, setTitle] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [address, setAddress] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [latitude, setLatitude] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [longitude, setLongitude] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-  const [description, setDescription] = useState({
-    value: "",
-    isValid: false,
-    isTouched: false,
-  });
-
   const [showCoordinates, setShowCoordinates] = useState(false);
 
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
 
+  const placeForm = useForm([
+    "title",
+    "address",
+    "latitude",
+    "longitude",
+    "description",
+  ]);
+
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const handleToggleCoordinates = () => {
     setShowCoordinates(!showCoordinates);
-    setAddress({ value: "", isValid: false, isTouched: false });
-    setLatitude({ value: "", isValid: false, isTouched: false });
-    setLongitude({ value: "", isValid: false, isTouched: false });
+    placeForm.resetFields(["latitude", "longitude", "address"]);
   };
 
   const handleCloseModal = () => {
@@ -56,13 +37,20 @@ const NewPlace = () => {
   const handleAddPlace = (e) => {
     e.preventDefault();
 
-    if (showCoordinates && (!latitude.isValid || !longitude.isValid)) {
+    const formState = placeForm.formState;
+
+    if (
+      showCoordinates &&
+      (!formState.latitude.isValid || !formState.longitude.isValid)
+    ) {
       return;
     }
 
     if (
       !showCoordinates &&
-      (!title.isValid || !address.isValid || !description.isValid)
+      (!formState.title.isValid ||
+        !formState.address.isValid ||
+        !formState.description.isValid)
     ) {
       return;
     }
@@ -70,23 +58,23 @@ const NewPlace = () => {
     const addPlace = async () => {
       const data = showCoordinates
         ? {
-            title: title.value,
+            title: formState.title.value,
             address: "",
             coordinates: {
-              lat: latitude.value,
-              lng: longitude.value,
+              lat: formState.latitude.value,
+              lng: formState.longitude.value,
             },
-            description: description.value,
+            description: formState.description.value,
             creator: auth.userId,
           }
         : {
-            title: title.value,
-            address: address.value,
+            title: formState.title.value,
+            address: formState.address.value,
             coordinates: {
               lat: 0,
               lng: 0,
             },
-            description: description.value,
+            description: formState.description.value,
             creator: auth.userId,
           };
 
@@ -120,7 +108,7 @@ const NewPlace = () => {
       {error && (
         <ErrorModal error={error} handleCloseModal={handleCloseModal} />
       )}
-      <div className="flex min-h-screen justify-center bg-gray-100 pt-[75px]">
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]">
         {isLoading ? (
           <div className="mt-4 flex w-full justify-center gap-4">
             <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
@@ -141,8 +129,7 @@ const NewPlace = () => {
                 type="text"
                 id="title"
                 label="Title"
-                state={title}
-                setState={setTitle}
+                form={placeForm}
                 placeholder="Enter Title"
               />
 
@@ -153,16 +140,17 @@ const NewPlace = () => {
                     type="text"
                     id="address"
                     label="Address"
-                    state={address}
-                    setState={setAddress}
+                    form={placeForm}
                     placeholder="Enter Address"
                   />
-                  <p
-                    onClick={handleToggleCoordinates}
-                    className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
-                  >
-                    Add with Coordinates?
-                  </p>
+                  <div>
+                    <span
+                      onClick={handleToggleCoordinates}
+                      className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
+                    >
+                      Add with Coordinates?
+                    </span>
+                  </div>
                 </>
               ) : (
                 <>
@@ -173,8 +161,7 @@ const NewPlace = () => {
                       type="number"
                       id="latitude"
                       label="Latitude"
-                      state={latitude}
-                      setState={setLatitude}
+                      form={placeForm}
                       placeholder="40.7128"
                     />
 
@@ -184,17 +171,18 @@ const NewPlace = () => {
                       type="number"
                       id="longitude"
                       label="Longitude"
-                      state={longitude}
-                      setState={setLongitude}
+                      form={placeForm}
                       placeholder="-74.0060"
                     />
                   </div>
-                  <p
-                    onClick={handleToggleCoordinates}
-                    className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
-                  >
-                    Add with Address?
-                  </p>
+                  <div>
+                    <span
+                      onClick={handleToggleCoordinates}
+                      className={`cursor-pointer text-blue-500 hover:underline ${isLoading && "pointer-events-none"}`}
+                    >
+                      Add with Address?
+                    </span>
+                  </div>
                 </>
               )}
 
@@ -204,8 +192,7 @@ const NewPlace = () => {
                 id="description"
                 label="Description"
                 placeholder="Write a description..."
-                state={description}
-                setState={setDescription}
+                form={placeForm}
               />
 
               <Button type="submit">Submit</Button>
