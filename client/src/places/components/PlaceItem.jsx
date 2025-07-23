@@ -91,9 +91,9 @@ const PlaceItem = ({
           <div className="w-full">
             <div className="w-full">
               <img
-                src={image}
+                src={`http://localhost:5000/${image}`}
                 alt={title}
-                className="h-[300px] w-full object-cover"
+                className=" aspect-square w-full object-cover"
               />
             </div>
 

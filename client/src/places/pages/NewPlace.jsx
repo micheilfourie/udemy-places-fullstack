@@ -7,6 +7,7 @@ import { AuthContext } from "../../shared/context/authContext";
 import LoadingSpinner from "../../shared/components/ui/LoadingSpinner";
 import ErrorModal from "../../shared/components/ui/ErrorModal";
 import { useForm } from "../../shared/hooks/form-hook";
+import ImageUpload from "../../shared/components/formElements/ImageUpload";
 
 const NewPlace = () => {
   const [showCoordinates, setShowCoordinates] = useState(false);
@@ -21,6 +22,7 @@ const NewPlace = () => {
     "latitude",
     "longitude",
     "description",
+    "image",
   ]);
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -56,36 +58,35 @@ const NewPlace = () => {
     }
 
     const addPlace = async () => {
-      const data = showCoordinates
-        ? {
-            title: formState.title.value,
-            address: "",
-            coordinates: {
-              lat: formState.latitude.value,
-              lng: formState.longitude.value,
-            },
-            description: formState.description.value,
-            creator: auth.userId,
-          }
-        : {
-            title: formState.title.value,
-            address: formState.address.value,
-            coordinates: {
-              lat: 0,
-              lng: 0,
-            },
-            description: formState.description.value,
-            creator: auth.userId,
-          };
+      const formData = new FormData();
+      formData.append("title", formState.title.value);
+      formData.append(
+        "address",
+        showCoordinates ? "" : formState.address.value,
+      );
+      formData.append(
+        "coordinates",
+        JSON.stringify(
+          showCoordinates
+            ? {
+                lat: formState.latitude.value,
+                lng: formState.longitude.value,
+              }
+            : {
+                lat: 0,
+                lng: 0,
+              },
+        ),
+      );
+      formData.append("description", formState.description.value);
+      formData.append("image", formState.image.value);
+      formData.append("creator", auth.userId);
 
       try {
         const res = await sendRequest(
           "http://localhost:5000/api/places",
           "POST",
-          JSON.stringify(data),
-          {
-            "Content-Type": "application/json",
-          },
+          formData,
         );
 
         if (!res) {
@@ -124,6 +125,8 @@ const NewPlace = () => {
                 Add New Place
               </h1>
 
+              <ImageUpload id={"image"} form={placeForm} />
+
               <Input
                 isLoading={isLoading}
                 type="text"
@@ -156,7 +159,6 @@ const NewPlace = () => {
                 <>
                   <div className="flex gap-4 max-[500px]:flex-col">
                     <Input
-                      isOptional
                       isLoading={isLoading}
                       type="number"
                       id="latitude"
@@ -166,7 +168,6 @@ const NewPlace = () => {
                     />
 
                     <Input
-                      isOptional
                       isLoading={isLoading}
                       type="number"
                       id="longitude"

@@ -1,16 +1,9 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
 
-const NavLinks = ({ direction = "row" }) => {
-  const { isLoggedIn, logout, userId } = useContext(AuthContext);
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
+const NavLinks = ({ direction = "row", handleCloseDrawer }) => {
+  const { isLoggedIn, userId } = useContext(AuthContext);
 
   return (
     <ul
@@ -19,6 +12,7 @@ const NavLinks = ({ direction = "row" }) => {
       <li>
         <NavLink
           to={"/"}
+          onClick={handleCloseDrawer}
           className={({ isActive }) => (isActive ? "text-blue-500" : "")}
         >
           All Users
@@ -30,6 +24,7 @@ const NavLinks = ({ direction = "row" }) => {
           <li>
             <NavLink
               to={`/${userId}/places`}
+              onClick={handleCloseDrawer}
               className={({ isActive }) => (isActive ? "text-blue-500" : "")}
             >
               My Places
@@ -39,17 +34,11 @@ const NavLinks = ({ direction = "row" }) => {
           <li>
             <NavLink
               to={"/places/new"}
+              onClick={handleCloseDrawer}
               className={({ isActive }) => (isActive ? "text-blue-500" : "")}
             >
               Add Place
             </NavLink>
-          </li>
-
-          <li
-            onClick={handleLogout}
-            className="cursor-pointer hover:text-blue-500"
-          >
-            Log Out
           </li>
         </>
       )}
@@ -58,6 +47,7 @@ const NavLinks = ({ direction = "row" }) => {
         <li>
           <NavLink
             to={"/auth"}
+            onClick={handleCloseDrawer}
             className={({ isActive }) => (isActive ? "text-blue-500" : "")}
           >
             Sign Up

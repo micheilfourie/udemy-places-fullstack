@@ -54,13 +54,16 @@ const createPlace = async (req, res, next) => {
   }
 
   const { title, description, address, creator, coordinates } = req.body;
+  const image = req.file.path;
+
+  const parsedCoordinates = JSON.parse(coordinates);
 
   const createdPlace = new Place({
     title,
     description,
-    image: "https://images.pexels.com/photos/9608201/pexels-photo-9608201.jpeg",
+    image,
     address,
-    location: coordinates,
+    location: parsedCoordinates,
     creator,
   });
 

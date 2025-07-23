@@ -1,11 +1,11 @@
-const Avatar = ({ image, width = 50, name }) => {
+const Avatar = ({ image, width = 50, name}) => {
 
   return (
     <div>
-      {!image ? (
+      {!image || image === "" ? (
         <div
           className={`flex items-center justify-center text-xl font-semibold rounded-full bg-gray-200`}
-          style={{ width: `${width}px`, height: `${width}px` }}
+          style={{ width: `${width}px`, height: `${width}px`}}
         >
           {name[0].toUpperCase()}
         </div>

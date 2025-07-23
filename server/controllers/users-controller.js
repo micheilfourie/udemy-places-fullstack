@@ -47,13 +47,20 @@ const addUser = async (req, res, next) => {
   });
 
   try {
-     await newUser.save();
+    await newUser.save();
   } catch (error) {
     const err = new HttpError("Signup failed, please try again.", 500);
     return next(err);
   }
 
-  res.json({ message: "User added!", userId: newUser.toObject({ getters: true }).id });
+  res.json({
+    message: "User added!",
+    user: {
+      id: newUser.id,
+      name: newUser.name,
+      image: newUser.image,
+    },
+  });
 };
 
 const loginUser = async (req, res, next) => {
@@ -78,8 +85,15 @@ const loginUser = async (req, res, next) => {
   if (!user || user.password !== password) {
     return next(new HttpError("Invalid credentials, could not login", 401));
   }
-
-  res.json({ message: "Logged in!", userId: user.toObject({ getters: true }).id });
+  
+  res.json({
+    message: "Logged in!",
+    user: {
+      id: user.id,
+      name: user.name,
+      image: user.image,
+    },
+  });
 };
 
 export { getUsers, addUser, loginUser };

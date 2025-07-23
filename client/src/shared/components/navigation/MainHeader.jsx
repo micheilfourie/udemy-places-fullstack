@@ -18,6 +18,7 @@ const MainHeader = () => {
       <header className="fixed top-0 z-30 w-full bg-white shadow-sm">
         <MainNavigation
           handleDrawerToggle={handleDrawerToggle}
+          handleCloseDrawer={handleCloseDrawer}
           isDrawerOpen={isDrawerOpen}
         />
       </header>

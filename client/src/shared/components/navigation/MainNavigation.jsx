@@ -1,15 +1,26 @@
 import { Link } from "react-router-dom";
 import NavLinks from "./NavLinks";
+import Avatar from "../ui/Avatar";
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
 
-const MainNavigation = ({ handleDrawerToggle, isDrawerOpen }) => {
+const MainNavigation = ({ handleDrawerToggle, isDrawerOpen, handleCloseDrawer }) => {
+  const { userName, userImage, isLoggedIn } = useContext(AuthContext);
+
   return (
-    <div className="mx-auto flex h-[75px] max-w-screen-xl items-center justify-between px-4">
+    <div className="mx-auto flex h-[75px] max-w-screen-xl items-center justify-between max-xl:px-4 ">
       <h1 className="text-2xl font-bold uppercase">
         <Link to={"/"}>Places</Link>
       </h1>
 
-      <nav className="gap-4 max-md:hidden">
-        <NavLinks />
+      <nav className="flex items-center gap-8 max-md:hidden">
+        <NavLinks handleCloseDrawer={handleCloseDrawer} />
+
+        {isLoggedIn && (
+          <button onClick={handleDrawerToggle} className="cursor-pointer">
+            <Avatar  image={userImage} name={userName} />
+          </button>
+        )}
       </nav>
 
       <button

@@ -8,6 +8,7 @@ import {
   patchPlace,
   deletePlace,
 } from "../controllers/places-controller.js";
+import fileUpload from "../middleware/file-upload.js";
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.get("/:pId", getPlaceById);
 router.get("/user/:uId", getPlacesByUserId);
 router.post(
   "/",
+  fileUpload.single("image"),
   check("title").isLength({ min: 3, max: 50 }),
   check("description").isLength({ min: 3, max: 200 }),
   createPlace
