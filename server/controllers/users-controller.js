@@ -1,6 +1,7 @@
 import HttpError from "../models/http-error.js";
 import { validationResult } from "express-validator";
 import User from "../models/user.js";
+import fs from "fs";
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -59,6 +60,7 @@ const addUser = async (req, res, next) => {
       id: newUser.id,
       name: newUser.name,
       image: newUser.image,
+      places: 0,
     },
   });
 };
@@ -85,15 +87,54 @@ const loginUser = async (req, res, next) => {
   if (!user || user.password !== password) {
     return next(new HttpError("Invalid credentials, could not login", 401));
   }
-  
+
   res.json({
     message: "Logged in!",
     user: {
       id: user.id,
       name: user.name,
       image: user.image,
+      places: user.places.length,
     },
   });
 };
 
-export { getUsers, addUser, loginUser };
+const updateUserImage = async (req, res, next) => {
+  const userId = req.params.uId;
+  const image = req.file.path;
+
+  let user;
+
+  try {
+    user = await User.findById(userId);
+  } catch (error) {
+    const err = new HttpError("Updating user failed, please try again", 500);
+    return next(err);
+  }
+
+  if (!user) {
+    return next(new HttpError("Could not find user for this id", 404));
+  }
+
+  const prevImagePath = user.image;
+
+  user.image = image;
+
+  try {
+    await user.save();
+  } catch (error) {
+    const err = new HttpError("Updating user failed, please try again", 500);
+    return next(err);
+  }
+
+  if (prevImagePath !== "") {
+    fs.unlink(prevImagePath, (err) => console.log(err));
+  }
+
+  res.json({
+    message: "User image updated!",
+    image: user.toObject({ getters: true }).image,
+  });
+};
+
+export { getUsers, addUser, loginUser, updateUserImage };

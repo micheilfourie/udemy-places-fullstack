@@ -14,7 +14,7 @@ const NewPlace = () => {
 
   const navigate = useNavigate();
 
-  const auth = useContext(AuthContext);
+  const { handlePlaceIncrement, userId } = useContext(AuthContext);
 
   const placeForm = useForm([
     "title",
@@ -26,6 +26,10 @@ const NewPlace = () => {
   ]);
 
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
 
   const handleToggleCoordinates = () => {
     setShowCoordinates(!showCoordinates);
@@ -41,6 +45,15 @@ const NewPlace = () => {
 
     const formState = placeForm.formState;
 
+    if (!formState.image.isValid) {
+      placeForm.markTouched("image");
+      return;
+    }
+
+    if (isLoading || !formState.description.isValid) {
+      return;
+    }
+
     if (
       showCoordinates &&
       (!formState.latitude.isValid || !formState.longitude.isValid)
@@ -50,9 +63,7 @@ const NewPlace = () => {
 
     if (
       !showCoordinates &&
-      (!formState.title.isValid ||
-        !formState.address.isValid ||
-        !formState.description.isValid)
+      (!formState.title.isValid || !formState.address.isValid)
     ) {
       return;
     }
@@ -80,7 +91,7 @@ const NewPlace = () => {
       );
       formData.append("description", formState.description.value);
       formData.append("image", formState.image.value);
-      formData.append("creator", auth.userId);
+      formData.append("creator", userId);
 
       try {
         const res = await sendRequest(
@@ -93,7 +104,8 @@ const NewPlace = () => {
           throw new Error();
         }
 
-        navigate(`/${auth.userId}/places`);
+        handlePlaceIncrement();
+        navigate(`/${userId}/places`);
 
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
@@ -109,7 +121,11 @@ const NewPlace = () => {
       {error && (
         <ErrorModal error={error} handleCloseModal={handleCloseModal} />
       )}
-      <div className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]">
+      <div
+        onDragOver={handleDragOver}
+        onDrop={handleDragOver}
+        className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]"
+      >
         {isLoading ? (
           <div className="mt-4 flex w-full justify-center gap-4">
             <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />

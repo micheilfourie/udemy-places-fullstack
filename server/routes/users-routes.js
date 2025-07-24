@@ -5,7 +5,9 @@ import {
   getUsers,
   addUser,
   loginUser,
+  updateUserImage,
 } from "../controllers/users-controller.js";
+import fileUpload from "../middleware/file-upload.js";
 
 const router = express.Router();
 
@@ -18,5 +20,11 @@ router.post(
   addUser
 );
 router.post("/login", loginUser);
+
+router.patch(
+  "/user/:uId/image",
+  fileUpload.single("image"),
+  updateUserImage
+);
 
 export default router;

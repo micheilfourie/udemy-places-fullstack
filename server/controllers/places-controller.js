@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import Place from "../models/place.js";
 import User from "../models/user.js";
 import mongoose from "mongoose";
+import fs from "fs";
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pId;
@@ -144,6 +145,8 @@ const deletePlace = async (req, res, next) => {
     return next(new HttpError("Could not find place for this id.", 404));
   }
 
+  const imagePath = place.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -155,6 +158,10 @@ const deletePlace = async (req, res, next) => {
     const err = new HttpError("Deleting place failed, please try again.", 500);
     return next(err);
   }
+
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Deleted place!" });
 };

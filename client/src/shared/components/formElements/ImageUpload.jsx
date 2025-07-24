@@ -6,7 +6,7 @@ const ImageUpload = ({ id, form }) => {
   const [previewUrl, setPreviewUrl] = useState("");
 
   const formElement = form.formState["image"];
-  const {updateValue, setFieldValidity, markTouched} = form;
+  const { updateValue, setFieldValidity, markTouched } = form;
 
   useEffect(() => {
     if (!formElement.value) {
@@ -22,19 +22,43 @@ const ImageUpload = ({ id, form }) => {
     fileReader.readAsDataURL(formElement.value);
   }, [formElement]);
 
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      const sendEvent = {
+        target: {
+          files: event.dataTransfer.files,
+        },
+      };
+
+      pickedFileHandler(sendEvent);
+    }
+  };
+
   const pickedFileHandler = (event) => {
     if (event.target.files && event.target.files.length === 1) {
       updateValue("image", event.target.files[0]);
       setFieldValidity("image", true);
-      markTouched("image");
-    } else {
-      updateValue("image", {});
-      setFieldValidity("image", false);
     }
+
+    if (formElement.value === "" || formElement.value) {
+      return;
+    }
+
+    updateValue("image", "");
+    setFieldValidity("image", false);
+    setPreviewUrl("");
+    return false;
   };
 
   const pickImageHandler = () => {
     inputRef.current.click();
+    markTouched("image");
   };
 
   return (
@@ -55,21 +79,34 @@ const ImageUpload = ({ id, form }) => {
       {!previewUrl ? (
         <div
           onClick={pickImageHandler}
-          className={`flex h-[200px] mb-2 w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-neutral-200 bg-gray-100`}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          className={`mb-2 flex h-[200px] w-full cursor-pointer flex-col items-center justify-center rounded-lg border ${formElement.isTouched && !formElement.isValid ? "border-red-400 bg-red-50" : "border-neutral-200 bg-gray-100"} `}
         >
           <CirclePlusSvg />
-          <p className="mt-2 text-neutral-400 uppercase">Upload Image</p>
+          <p className="mt-2 text-neutral-400 uppercase">
+            Drop Image Or Click Here
+          </p>
         </div>
       ) : (
-        <div onClick={pickImageHandler} className="mb-2 cursor-pointer">
-          <div className=" w-full overflow-hidden rounded-lg">
+        <div
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={pickImageHandler}
+          className="mb-2 cursor-pointer"
+        >
+          <div className="w-full overflow-hidden rounded-lg">
             <img
               src={previewUrl && previewUrl}
               alt="preview"
-              className="origin-center object-cover aspect-square"
+              className="aspect-square origin-center object-cover"
             />
           </div>
         </div>
+      )}
+
+      {formElement.isTouched && !formElement.isValid && (
+        <p className="text-sm text-red-500">Please upload a valid image.</p>
       )}
     </div>
   );

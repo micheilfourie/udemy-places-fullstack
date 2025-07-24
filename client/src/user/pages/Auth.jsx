@@ -69,9 +69,9 @@ const Auth = () => {
         throw new Error();
       }
 
-      const {id, name, image} = res.user;
+      const { id, name, image, places } = res.user;
 
-      login(id, name, image);
+      login(id, name, image, places);
       navigate("/");
 
       // eslint-disable-next-line no-unused-vars

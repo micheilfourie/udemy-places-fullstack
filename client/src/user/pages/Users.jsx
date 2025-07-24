@@ -2,11 +2,15 @@ import UsersList from "../components/UsersList";
 import { useState, useEffect } from "react";
 import LoadingSpinner from "../../shared/components/ui/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import { AuthContext } from "../../shared/context/authContext";
+import { useContext } from "react";
 
 const Users = () => {
   const [userList, setUserList] = useState([]);
 
   const { isLoading, sendRequest } = useHttpClient();
+
+  const {userImage} = useContext(AuthContext);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -21,7 +25,7 @@ const Users = () => {
     };
 
     fetchUsers();
-  }, [sendRequest]);
+  }, [sendRequest, userImage]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pt-[75px]">

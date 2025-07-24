@@ -20,7 +20,7 @@ const PlaceItem = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
-  const { userId } = useContext(AuthContext);
+  const { userId, handlePlaceDecrement } = useContext(AuthContext);
 
   const { error, sendRequest, clearError } = useHttpClient();
 
@@ -53,6 +53,7 @@ const PlaceItem = ({
         setLoadedPlaces((prevPlaces) =>
           prevPlaces.filter((place) => place.id !== id),
         );
+        handlePlaceDecrement();
 
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
