@@ -49,15 +49,23 @@ const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError("Invalid inputs passed, please check your data.", 422)
-    );
+    return next(new HttpError("Invalid inputs passed, please check your data.", 422));
   }
 
   const { title, description, address, creator, coordinates } = req.body;
-  const image = req.file.path;
 
-  const parsedCoordinates = JSON.parse(coordinates);
+  if (!req.file || !req.file.processedPath) {
+    return next(new HttpError("No processed image found.", 400));
+  }
+
+  const image = req.file.processedPath;
+
+  let parsedCoordinates;
+  try {
+    parsedCoordinates = JSON.parse(coordinates);
+  } catch {
+    return next(new HttpError("Invalid coordinates format.", 422));
+  }
 
   const createdPlace = new Place({
     title,
@@ -73,8 +81,7 @@ const createPlace = async (req, res, next) => {
   try {
     user = await User.findById(creator);
   } catch (error) {
-    const err = new HttpError("Creating place failed, please try again.", 500);
-    return next(err);
+    return next(new HttpError("Creating place failed, please try again.", 500));
   }
 
   if (!user) {
@@ -89,12 +96,12 @@ const createPlace = async (req, res, next) => {
     await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (error) {
-    const err = new HttpError("Creating place failed, please try again.", 500);
-    return next(err);
+    return next(new HttpError("Creating place failed, please try again.", 500));
   }
 
   res.status(201).json({ place: createdPlace });
 };
+
 
 const patchPlace = async (req, res, next) => {
   const errors = validationResult(req);

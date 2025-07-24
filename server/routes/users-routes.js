@@ -8,6 +8,7 @@ import {
   updateUserImage,
 } from "../controllers/users-controller.js";
 import fileUpload from "../middleware/file-upload.js";
+import imageSharpMiddleware from "../middleware/image-sharp.js";
 
 const router = express.Router();
 
@@ -20,10 +21,10 @@ router.post(
   addUser
 );
 router.post("/login", loginUser);
-
 router.patch(
   "/user/:uId/image",
   fileUpload.single("image"),
+  imageSharpMiddleware(100),
   updateUserImage
 );
 

@@ -101,34 +101,36 @@ const loginUser = async (req, res, next) => {
 
 const updateUserImage = async (req, res, next) => {
   const userId = req.params.uId;
-  const image = req.file.path;
+
+  if (!req.file || !req.file.processedPath) {
+    return next(new HttpError("No processed image found", 400));
+  }
 
   let user;
 
   try {
     user = await User.findById(userId);
   } catch (error) {
-    const err = new HttpError("Updating user failed, please try again", 500);
-    return next(err);
+    return next(new HttpError("Updating user failed", 500));
   }
 
   if (!user) {
-    return next(new HttpError("Could not find user for this id", 404));
+    return next(new HttpError("User not found", 404));
   }
 
   const prevImagePath = user.image;
-
-  user.image = image;
+  user.image = req.file.processedPath;
 
   try {
     await user.save();
   } catch (error) {
-    const err = new HttpError("Updating user failed, please try again", 500);
-    return next(err);
+    return next(new HttpError("Saving user failed", 500));
   }
 
-  if (prevImagePath !== "") {
-    fs.unlink(prevImagePath, (err) => console.log(err));
+  if (prevImagePath && fs.existsSync(prevImagePath)) {
+    fs.unlink(prevImagePath, (err) => {
+      if (err) console.log(err);
+    });
   }
 
   res.json({
