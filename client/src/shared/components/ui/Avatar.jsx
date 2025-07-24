@@ -1,7 +1,7 @@
 const Avatar = ({ image, width = 50, name }) => {
   const charArr = [..."abcdefghijklmnopqrstuvwxyz"];
 
-  const colorVariations = ["#BFDBFE", "#BBF7D0", "#E9D5FF", "#FEF9C3"];
+  const colorVariations = ["#BFDBFE", "#BBF7D0", "#E9D5FF"];
   const defaultColor = "#F3F4F6";
 
   const generateColor = (char) => {
