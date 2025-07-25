@@ -49,10 +49,12 @@ const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return next(new HttpError("Invalid inputs passed, please check your data.", 422));
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
   }
 
-  const { title, description, address, creator, coordinates } = req.body;
+  const { title, description, address, coordinates } = req.body;
 
   if (!req.file || !req.file.processedPath) {
     return next(new HttpError("No processed image found.", 400));
@@ -73,13 +75,13 @@ const createPlace = async (req, res, next) => {
     image,
     address,
     location: parsedCoordinates,
-    creator,
+    creator: req.userId,
   });
 
   let user;
 
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userId);
   } catch (error) {
     return next(new HttpError("Creating place failed, please try again.", 500));
   }
@@ -102,7 +104,6 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-
 const patchPlace = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -122,6 +123,10 @@ const patchPlace = async (req, res, next) => {
   } catch (error) {
     const err = new HttpError("Updating place failed, please try again.", 500);
     return next(err);
+  }
+
+  if (req.userId !== place.creator.toString()) {
+    return next(new HttpError("Authorization failed.", 401));
   }
 
   place.title = title;
@@ -150,6 +155,10 @@ const deletePlace = async (req, res, next) => {
 
   if (!place) {
     return next(new HttpError("Could not find place for this id.", 404));
+  }
+
+  if (place.creator.id !== req.userId) {
+    return next(new HttpError("Authorization failed.", 401));
   }
 
   const imagePath = place.image;

@@ -20,7 +20,7 @@ const PlaceItem = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
 
-  const { userId, handlePlaceDecrement } = useContext(AuthContext);
+  const { userState, handlePlaceDecrement, token } = useContext(AuthContext);
 
   const { error, sendRequest, clearError } = useHttpClient();
 
@@ -43,6 +43,10 @@ const PlaceItem = ({
         const res = await sendRequest(
           `http://localhost:5000/api/places/${id}`,
           "DELETE",
+          null,
+          {
+            Authorization: `Bearer ${token}`,
+          },
         );
 
         if (!res) {
@@ -94,19 +98,23 @@ const PlaceItem = ({
               <img
                 src={`http://localhost:5000/${image}`}
                 alt={title}
-                className=" aspect-square w-full object-cover"
+                className="aspect-square w-full object-cover"
               />
             </div>
 
             <div className="mt-4 p-4">
               <h2 className="text-2xl font-semibold">{title}</h2>
-              <h3 className="mt-1 text-sm text-neutral-500">{address === "" ? `${coordinates.lat}, ${coordinates.lng}` : address}</h3>
+              <h3 className="mt-1 text-sm text-neutral-500">
+                {address === ""
+                  ? `${coordinates.lat}, ${coordinates.lng}`
+                  : address}
+              </h3>
               <p className="mt-4">{description}</p>
             </div>
 
             <div className="flex items-center gap-2 p-4">
               <Button action={() => handleShowModal("map")}>View on map</Button>
-              {creatorId === userId && (
+              {creatorId === userState.userId && (
                 <>
                   <Button link={`/places/${id}`} buttonStyle="caution">
                     Edit

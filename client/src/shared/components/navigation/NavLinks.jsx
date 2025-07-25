@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
 
 const NavLinks = ({ direction = "row", handleCloseDrawer }) => {
-  const { isLoggedIn, userId } = useContext(AuthContext);
+  const { isLoggedIn, userState } = useContext(AuthContext);
 
   return (
     <ul
@@ -23,7 +23,7 @@ const NavLinks = ({ direction = "row", handleCloseDrawer }) => {
         <>
           <li>
             <NavLink
-              to={`/${userId}/places`}
+              to={`/${userState.userId}/places`}
               onClick={handleCloseDrawer}
               className={({ isActive }) => (isActive ? "text-blue-500" : "")}
             >

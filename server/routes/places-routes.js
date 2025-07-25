@@ -10,11 +10,15 @@ import {
 } from "../controllers/places-controller.js";
 import fileUpload from "../middleware/file-upload.js";
 import imageSharpMiddleware from "../middleware/image-sharp.js";
+import checkAuth from "../middleware/check-auth.js";
 
 const router = express.Router();
 
 router.get("/:pId", getPlaceById);
 router.get("/user/:uId", getPlacesByUserId);
+
+router.use(checkAuth);
+
 router.post(
   "/",
   fileUpload.single("image"),

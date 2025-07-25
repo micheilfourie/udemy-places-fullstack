@@ -15,7 +15,7 @@ const UpdatePlace = () => {
 
   const navigate = useNavigate();
 
-  const auth = useContext(AuthContext);
+  const { userState, token } = useContext(AuthContext);
 
   const updatePlaceForm = useForm(["title", "description"]);
   const { updateValue, setFieldValidity } = updatePlaceForm;
@@ -43,6 +43,8 @@ const UpdatePlace = () => {
     };
 
     fetchPlace();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sendRequest, placeId]);
 
   const handleEditPlace = (e) => {
@@ -64,6 +66,7 @@ const UpdatePlace = () => {
             description: formState.description.value,
           }),
           {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         );
@@ -72,7 +75,7 @@ const UpdatePlace = () => {
           throw new Error();
         }
 
-        navigate(`/${auth.userId}/places`);
+        navigate(`/${userState.userId}/places`);
 
         // eslint-disable-next-line no-unused-vars
       } catch (error) {

@@ -14,7 +14,7 @@ const NewPlace = () => {
 
   const navigate = useNavigate();
 
-  const { handlePlaceIncrement, userId } = useContext(AuthContext);
+  const { handlePlaceIncrement, userState, token } = useContext(AuthContext);
 
   const placeForm = useForm([
     "title",
@@ -91,13 +91,15 @@ const NewPlace = () => {
       );
       formData.append("description", formState.description.value);
       formData.append("image", formState.image.value);
-      formData.append("creator", userId);
 
       try {
         const res = await sendRequest(
           "http://localhost:5000/api/places",
           "POST",
           formData,
+          {
+            Authorization: "Bearer " + token,
+          },
         );
 
         if (!res) {
@@ -105,7 +107,7 @@ const NewPlace = () => {
         }
 
         handlePlaceIncrement();
-        navigate(`/${userId}/places`);
+        navigate(`/${userState.userId}/places`);
 
         // eslint-disable-next-line no-unused-vars
       } catch (error) {

@@ -2,12 +2,17 @@ import HttpError from "../models/http-error.js";
 import { validationResult } from "express-validator";
 import User from "../models/user.js";
 import fs from "fs";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const getUsers = async (req, res, next) => {
   let users;
 
   try {
-    users = await User.find({}, "-password");
+    users = await User.find({}, "-password -email");
   } catch (error) {
     const err = new HttpError("Fetching users failed, please try again", 500);
     return next(err);
@@ -39,16 +44,38 @@ const addUser = async (req, res, next) => {
     return next(new HttpError("User already exists.", 422));
   }
 
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (error) {
+    const err = new HttpError("Signup failed, please try again.", 500);
+    return next(err);
+  }
+
   const newUser = new User({
     name,
     email,
     image: "",
-    password,
+    password: hashedPassword,
     places: [],
   });
 
   try {
     await newUser.save();
+  } catch (error) {
+    const err = new HttpError("Signup failed, please try again.", 500);
+    return next(err);
+  }
+
+  let token;
+
+  try {
+    token = jwt.sign(
+      { userId: newUser.id, email: email },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" }
+    );
   } catch (error) {
     const err = new HttpError("Signup failed, please try again.", 500);
     return next(err);
@@ -61,6 +88,7 @@ const addUser = async (req, res, next) => {
       name: newUser.name,
       image: newUser.image,
       places: 0,
+      token: token,
     },
   });
 };
@@ -84,8 +112,34 @@ const loginUser = async (req, res, next) => {
     return next(err);
   }
 
-  if (!user || user.password !== password) {
+  if (!user) {
     return next(new HttpError("Invalid credentials, could not login", 401));
+  }
+
+  let isValidPassword = false;
+
+  try {
+    isValidPassword = await bcrypt.compare(password, user.password);
+  } catch (error) {
+    const err = new HttpError("Login failed, please try again", 500);
+    return next(err);
+  }
+
+  if (!isValidPassword) {
+    return next(new HttpError("Invalid credentials, could not login", 401));
+  }
+
+  let token;
+
+  try {
+    token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_KEY,
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    const err = new HttpError("Login failed, please try again", 500);
+    return next(err);
   }
 
   res.json({
@@ -95,6 +149,7 @@ const loginUser = async (req, res, next) => {
       name: user.name,
       image: user.image,
       places: user.places.length,
+      token: token,
     },
   });
 };
@@ -116,6 +171,10 @@ const updateUserImage = async (req, res, next) => {
 
   if (!user) {
     return next(new HttpError("User not found", 404));
+  }
+
+  if (req.userId !== user.id) {
+    return next(new HttpError("Authorization failed", 401));
   }
 
   const prevImagePath = user.image;

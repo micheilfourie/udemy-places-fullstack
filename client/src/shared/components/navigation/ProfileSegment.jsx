@@ -6,14 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useHttpClient } from "../../hooks/http-hook";
 
 const ProfileSegment = ({ handleCloseDrawer }) => {
-  const {
-    userName,
-    userImage,
-    logout,
-    setUserImage,
-    userId,
-    userPlacesLength,
-  } = useContext(AuthContext);
+  const { logout, handleImageChange, userState, token } =
+    useContext(AuthContext);
 
   const inputRef = useRef();
   const { sendRequest } = useHttpClient();
@@ -40,16 +34,19 @@ const ProfileSegment = ({ handleCloseDrawer }) => {
 
       try {
         const res = await sendRequest(
-          `http://localhost:5000/api/users/user/${userId}/image`,
+          `http://localhost:5000/api/users/user/${userState.userId}/image`,
           "PATCH",
           formData,
+          {
+            Authorization: `Bearer ${token}`,
+          },
         );
 
         if (!res) {
           throw new Error();
         }
 
-        setUserImage(res.image);
+        handleImageChange(res.image);
 
         // eslint-disable-next-line no-unused-vars
       } catch (error) {
@@ -73,12 +70,17 @@ const ProfileSegment = ({ handleCloseDrawer }) => {
         />
 
         <button onClick={handlePickImage} className="cursor-pointer">
-          <Avatar width={100} image={userImage} name={userName} />
+          <Avatar
+            width={100}
+            image={userState.userImage}
+            name={userState.userName}
+          />
         </button>
 
-        <h2 className="mt-4 text-center text-2xl">{userName}</h2>
+        <h2 className="mt-4 text-center text-2xl">{userState.userName}</h2>
         <p className="text-center">
-          {userPlacesLength} {userPlacesLength === 1 ? "Place" : "Places"}
+          {userState.userPlacesLength}{" "}
+          {userState.userPlacesLength === 1 ? "Place" : "Places"}
         </p>
       </div>
 

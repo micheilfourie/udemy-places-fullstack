@@ -9,6 +9,7 @@ import {
 } from "../controllers/users-controller.js";
 import fileUpload from "../middleware/file-upload.js";
 import imageSharpMiddleware from "../middleware/image-sharp.js";
+import checkAuth from "../middleware/check-auth.js";
 
 const router = express.Router();
 
@@ -21,6 +22,9 @@ router.post(
   addUser
 );
 router.post("/login", loginUser);
+
+router.use(checkAuth);
+
 router.patch(
   "/user/:uId/image",
   fileUpload.single("image"),

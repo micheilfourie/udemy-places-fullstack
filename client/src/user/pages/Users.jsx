@@ -10,7 +10,7 @@ const Users = () => {
 
   const { isLoading, sendRequest } = useHttpClient();
 
-  const {userImage} = useContext(AuthContext);
+  const { userState } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -25,12 +25,12 @@ const Users = () => {
     };
 
     fetchUsers();
-  }, [sendRequest, userImage]);
+  }, [sendRequest, userState]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 pt-[75px]">
       {isLoading ? (
-        <div className="mt-4 flex w-full gap-4 items-center justify-center">
+        <div className="mt-4 flex w-full items-center justify-center gap-4">
           <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
         </div>
       ) : (

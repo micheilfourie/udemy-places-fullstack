@@ -4,11 +4,15 @@ import Avatar from "../ui/Avatar";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 
-const MainNavigation = ({ handleDrawerToggle, isDrawerOpen, handleCloseDrawer }) => {
-  const { userName, userImage, isLoggedIn } = useContext(AuthContext);
+const MainNavigation = ({
+  handleDrawerToggle,
+  isDrawerOpen,
+  handleCloseDrawer,
+}) => {
+  const { userState, isLoggedIn } = useContext(AuthContext);
 
   return (
-    <div className="mx-auto flex h-[75px] max-w-screen-xl items-center justify-between max-xl:px-4 ">
+    <div className="mx-auto flex h-[75px] max-w-screen-xl items-center justify-between max-xl:px-4">
       <h1 className="text-2xl font-bold uppercase">
         <Link to={"/"}>Places</Link>
       </h1>
@@ -18,7 +22,7 @@ const MainNavigation = ({ handleDrawerToggle, isDrawerOpen, handleCloseDrawer })
 
         {isLoggedIn && (
           <button onClick={handleDrawerToggle} className="cursor-pointer">
-            <Avatar  image={userImage} name={userName} />
+            <Avatar image={userState.userImage} name={userState.userName} />
           </button>
         )}
       </nav>
