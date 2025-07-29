@@ -15,7 +15,7 @@ const Users = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const userData = await sendRequest("http://localhost:5000/api/users");
+        const userData = await sendRequest(`${import.meta.env.VITE_API_URL}/api/users`);
         setUserList(userData.users);
 
         // eslint-disable-next-line no-unused-vars

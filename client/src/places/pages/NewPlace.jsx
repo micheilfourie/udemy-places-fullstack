@@ -94,7 +94,7 @@ const NewPlace = () => {
 
       try {
         const res = await sendRequest(
-          "http://localhost:5000/api/places",
+          `${import.meta.env.VITE_API_URL}/api/places`,
           "POST",
           formData,
           {

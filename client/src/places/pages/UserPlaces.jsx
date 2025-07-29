@@ -13,7 +13,7 @@ const UserPlaces = () => {
     const fetchPlaces = async () => {
       try {
         const res = await sendRequest(
-          `http://localhost:5000/api/places/user/${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/places/user/${userId}`,
         );
 
         setLoadedPlaces(res.places);

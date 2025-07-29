@@ -24,7 +24,7 @@ const UpdatePlace = () => {
     const fetchPlace = async () => {
       try {
         const res = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`,
+          `${import.meta.env.VITE_API_URL}/api/places/${placeId}`,
         );
 
         if (!res) {
@@ -59,7 +59,7 @@ const UpdatePlace = () => {
 
       try {
         const res = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`,
+          `${import.meta.env.VITE_API_URL}/api/places/${placeId}`,
           "PATCH",
           JSON.stringify({
             title: formState.title.value,

@@ -48,8 +48,8 @@ const Auth = () => {
     }
 
     const url = !isRegister
-      ? "http://localhost:5000/api/users/login"
-      : "http://localhost:5000/api/users/signup";
+      ? `${import.meta.env.VITE_API_URL}/api/users/login`
+      : `${import.meta.env.VITE_API_URL}/api/users/signup`;
 
     try {
       const res = await sendRequest(

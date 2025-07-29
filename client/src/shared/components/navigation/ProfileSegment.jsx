@@ -34,7 +34,7 @@ const ProfileSegment = ({ handleCloseDrawer }) => {
 
       try {
         const res = await sendRequest(
-          `http://localhost:5000/api/users/user/${userState.userId}/image`,
+          `${import.meta.env.VITE_API_URL}/api/users/user/${userState.userId}/image`,
           "PATCH",
           formData,
           {

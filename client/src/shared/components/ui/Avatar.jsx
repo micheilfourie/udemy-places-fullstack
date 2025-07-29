@@ -30,7 +30,7 @@ const Avatar = ({ image, width = 50, name }) => {
         </div>
       ) : (
         <img
-          src={`http://localhost:5000/${image}`}
+          src={`${import.meta.env.VITE_API_URL}/${image}`}
           alt=""
           className={`rounded-full object-cover`}
           style={{ width: `${width}px`, height: `${width}px` }}

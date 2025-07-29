@@ -41,7 +41,7 @@ const PlaceItem = ({
     const deletePlace = async () => {
       try {
         const res = await sendRequest(
-          `http://localhost:5000/api/places/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/places/${id}`,
           "DELETE",
           null,
           {
@@ -96,7 +96,7 @@ const PlaceItem = ({
           <div className="w-full">
             <div className="w-full">
               <img
-                src={`http://localhost:5000/${image}`}
+                src={`${import.meta.env.VITE_API_URL}/${image}`}
                 alt={title}
                 className="aspect-square w-full object-cover"
               />
