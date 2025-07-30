@@ -9,6 +9,8 @@ const UserPlaces = () => {
   const [places, setLoadedPlaces] = useState([]);
   const { isLoading, sendRequest } = useHttpClient();
 
+  
+
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
@@ -27,6 +29,8 @@ const UserPlaces = () => {
     fetchPlaces();
   }, [sendRequest, userId, setLoadedPlaces]);
 
+
+
   return (
     <div className="min-h-screen bg-gray-100 pt-[75px]">
       {isLoading ? (
@@ -34,7 +38,7 @@ const UserPlaces = () => {
           <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
         </div>
       ) : (
-        <PlaceList items={places} setLoadedPlaces={setLoadedPlaces} />
+        <PlaceList items={places} setLoadedPlaces={setLoadedPlaces} userId={userId}/>
       )}
     </div>
   );

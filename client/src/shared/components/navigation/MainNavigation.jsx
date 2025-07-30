@@ -21,15 +21,40 @@ const MainNavigation = ({
         <NavLinks handleCloseDrawer={handleCloseDrawer} />
 
         {isLoggedIn && (
-          <button onClick={handleDrawerToggle} className="cursor-pointer">
-            <Avatar image={userState.userImage} name={userState.userName} />
+          <button
+            onClick={handleDrawerToggle}
+            className="relative flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition-transform duration-300 outline-none"
+          >
+            <span
+              className={`absolute h-1 w-8 rounded-full bg-neutral-800 transition-all duration-300 ${
+                isDrawerOpen
+                  ? "translate-y-0 -rotate-45 opacity-100"
+                  : "-translate-y-2 opacity-0"
+              }`}
+            />
+
+            <span
+              className={`absolute h-1 w-8 rounded-full bg-neutral-800 transition-all duration-300 ${
+                isDrawerOpen
+                  ? "translate-y-0 rotate-45 opacity-100"
+                  : "translate-y-2 opacity-0"
+              }`}
+            />
+
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                isDrawerOpen ? "scale-0 opacity-0" : "scale-100 opacity-100"
+              }`}
+            >
+              <Avatar image={userState.userImage} name={userState.userName} />
+            </div>
           </button>
         )}
       </nav>
 
       <button
         onClick={handleDrawerToggle}
-        className="hidden cursor-pointer flex-col items-center gap-1.5 max-md:flex"
+        className="hidden cursor-pointer flex-col items-center gap-1.5 px-2 py-4 max-md:flex"
       >
         <span
           className={`h-1 w-8 rounded-full bg-neutral-800 ${isDrawerOpen && "translate-y-2.5 -rotate-45"} transition-all duration-300 ease-in-out`}

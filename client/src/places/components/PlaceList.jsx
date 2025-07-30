@@ -1,14 +1,24 @@
 import PlaceItem from "./PlaceItem";
+import { useContext } from "react";
+import { AuthContext } from "../../shared/context/authContext";
+import AddPlaceSkeleton from "../../shared/components/ui/AddPlaceSkeleton";
+import { useNavigate } from "react-router-dom";
 
-const PlaceList = ({ items, setLoadedPlaces }) => {
+const PlaceList = ({ items, setLoadedPlaces, userId }) => {
+  const { isLoggedIn, userState } = useContext(AuthContext);
 
-  if (items.length === 0) {
-    return <h1 className="text-2xl font-semibold text-center pt-4">No places found</h1>;
+  const navigate = useNavigate();
+
+  if (items.length === 0 && !isLoggedIn) {
+    return (
+      <h1 className="pt-4 text-center text-2xl font-semibold">
+        No places found
+      </h1>
+    );
   }
 
   return (
-    
-    <div className="mx-auto max-w-screen-xl p-4">
+    <div className="mx-auto max-w-screen-xl p-4 xl:px-0">
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {items.map((place) => (
           <PlaceItem
@@ -23,10 +33,14 @@ const PlaceList = ({ items, setLoadedPlaces }) => {
             setLoadedPlaces={setLoadedPlaces}
           />
         ))}
+
+        {isLoggedIn && userState.userId === userId && (
+          <li>
+            <AddPlaceSkeleton action = {() => navigate("/places/new")}/>
+          </li>
+        )}
       </ul>
     </div>
-    
-    
   );
 };
 

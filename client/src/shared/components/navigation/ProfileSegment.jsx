@@ -4,6 +4,7 @@ import Button from "../formElements/Button";
 import Avatar from "../ui/Avatar";
 import { useNavigate } from "react-router-dom";
 import { useHttpClient } from "../../hooks/http-hook";
+import UploadSvg from "../ui/UploadSvg";
 
 const ProfileSegment = ({ handleCloseDrawer }) => {
   const { logout, handleImageChange, userState, token } =
@@ -69,12 +70,18 @@ const ProfileSegment = ({ handleCloseDrawer }) => {
           onChange={pickedFileHandler}
         />
 
-        <button onClick={handlePickImage} className="cursor-pointer">
+        <button
+          onClick={handlePickImage}
+          className="group cursor-pointer relative"
+        >
           <Avatar
             width={100}
             image={userState.userImage}
             name={userState.userName}
           />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-full h-full rounded-full flex justify-center items-center pb-3 -translate-y-1/2  opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:bg-neutral-500/90">
+            <UploadSvg width="50"/>
+          </div>
         </button>
 
         <h2 className="mt-4 text-center text-2xl">{userState.userName}</h2>

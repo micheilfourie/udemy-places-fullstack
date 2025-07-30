@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import CirclePlusSvg from "../ui/CirclePlusSvg";
+import UploadSvg from "../ui/UploadSvg";
 
 const ImageUpload = ({ id, form }) => {
   const inputRef = useRef();
@@ -83,8 +83,8 @@ const ImageUpload = ({ id, form }) => {
           onDrop={handleDrop}
           className={`mb-2 flex h-[200px] w-full cursor-pointer flex-col items-center justify-center rounded-lg border ${formElement.isTouched && !formElement.isValid ? "border-red-400 bg-red-50" : "border-neutral-200 bg-gray-100"} `}
         >
-          <CirclePlusSvg />
-          <p className="mt-2 text-neutral-400 uppercase">
+          <UploadSvg width="50" color="oklch(80.9% 0 0)" />
+          <p className="mt-3 text-neutral-400 uppercase">
             Drop Image Or Click Here
           </p>
         </div>
