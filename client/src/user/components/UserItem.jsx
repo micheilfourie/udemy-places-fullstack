@@ -10,13 +10,13 @@ const UserItem = ({ id, name, image, places }) => {
   const { userState } = useContext(AuthContext);
 
   return (
-    <li className="my-4">
+    <li>
       <Link to={`/${id}/places`}>
         <Card>
-          <div className="flex items-center gap-4 p-4">
+          <div className="flex items-center gap-6 p-4 px-6">
             <Avatar image={image} name={name} width={100} />
             <div>
-              <h2 className="text-xl">
+              <h2 className="text-xl font-semibold">
                 {name}
                 <span className="text-blue-500">
                   {userState.userId === id && " (You)"}

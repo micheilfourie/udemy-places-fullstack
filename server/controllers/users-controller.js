@@ -9,16 +9,40 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const getUsers = async (req, res, next) => {
-  let users;
-
   try {
-    users = await User.find({}, "-password -email");
+    let { page = 1, limit = 5, name, places } = req.query;
+
+    page = Math.max(1, parseInt(page));
+    limit = Math.max(1, parseInt(limit));
+    const skip = (page - 1) * limit;
+
+    const query = {};
+
+    if (name) {
+      query.name = { $regex: name, $options: "i" };
+    }
+
+    if (places) {
+      query.places = { $size: parseInt(places) };
+    }
+
+    const rawUsers = await User.find(query).skip(skip).limit(limit).exec();
+
+    const total = await User.countDocuments(query);
+
+    const users = rawUsers.map((user) => user.toObject({ getters: true }));
+
+    res.json({
+      users,
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      limit,
+    });
   } catch (error) {
     const err = new HttpError("Fetching users failed, please try again", 500);
     return next(err);
   }
-
-  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
 const addUser = async (req, res, next) => {

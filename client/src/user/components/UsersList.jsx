@@ -8,7 +8,7 @@ const UsersList = ({ users }) => {
   }
 
   return (
-    <ul className="mx-auto max-w-screen-xl">
+    <ul className="flex flex-col gap-4">
       {users.map((user) => (
         <UserItem
           key={user.id}
