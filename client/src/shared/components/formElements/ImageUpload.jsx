@@ -41,6 +41,10 @@ const ImageUpload = ({ id, form }) => {
   };
 
   const pickedFileHandler = (event) => {
+    if (inputRef.current._wasClicked) {
+      markTouched("image");
+    }
+
     if (event.target.files && event.target.files.length === 1) {
       updateValue("image", event.target.files[0]);
       setFieldValidity("image", true);
@@ -57,8 +61,20 @@ const ImageUpload = ({ id, form }) => {
   };
 
   const pickImageHandler = () => {
-    inputRef.current.click();
-    markTouched("image");
+    const input = inputRef.current;
+
+    const onDialogClose = () => {
+      setTimeout(() => {
+        if (!input.files || input.files.length === 0) {
+          markTouched("image");
+        }
+
+        window.removeEventListener("focus", onDialogClose);
+      }, 100);
+    };
+
+    window.addEventListener("focus", onDialogClose);
+    input.click();
   };
 
   return (

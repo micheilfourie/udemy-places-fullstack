@@ -28,16 +28,15 @@ const getUsers = async (req, res, next) => {
 
     const rawUsers = await User.find(query).skip(skip).limit(limit).exec();
 
-    const total = await User.countDocuments(query);
+    const results = await User.countDocuments(query);
 
     const users = rawUsers.map((user) => user.toObject({ getters: true }));
 
     res.json({
       users,
-      total,
-      totalPages: Math.ceil(total / limit),
+      results,
+      totalPages: Math.ceil(results / limit),
       currentPage: page,
-      limit,
     });
   } catch (error) {
     const err = new HttpError("Fetching users failed, please try again", 500);

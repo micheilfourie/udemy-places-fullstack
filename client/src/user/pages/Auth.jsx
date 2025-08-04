@@ -86,14 +86,14 @@ const Auth = () => {
         <ErrorModal error={error} handleCloseModal={handleCloseModal} />
       )}
 
-      <div className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]">
+      <div className="flex min-h-screen items-center justify-center bg-gray-200 pt-[75px]">
         <div className="m-4 h-full w-full max-w-[500px] rounded-lg bg-white p-8 shadow-sm">
           <form
             onSubmit={handleSubmit}
             action=""
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-6"
           >
-            <h1 className="mb-4 text-center text-2xl font-semibold">
+            <h1 className="mb-4 text-center text-2xl font-semibold ">
               {isRegister ? "Sign Up" : "Login"}
             </h1>
 
@@ -126,7 +126,7 @@ const Auth = () => {
               placeholder="Enter Password"
             />
 
-            {!isRegister && (
+            {/* {!isRegister && (
               <div>
                 <span
                   className={`cursor-pointer text-center ${isLoading && "pointer-events-none"} text-blue-500 hover:underline`}
@@ -134,16 +134,14 @@ const Auth = () => {
                   Forgot Password?
                 </span>
               </div>
-            )}
-
-            <br />
+            )} */}
 
             {isLoading ? (
-              <Button disabled>
+              <Button disabled className={"mt-4"}>
                 <LoadingSpinner />
               </Button>
             ) : (
-              <Button type="submit">{isRegister ? "Sign Up" : "Login"}</Button>
+              <Button type="submit" className={"mt-4"}>{isRegister ? "Sign Up" : "Login"}</Button>
             )}
 
             <div className="flex items-center justify-center">

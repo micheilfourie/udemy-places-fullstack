@@ -13,9 +13,14 @@ const MainNavigation = ({
 
   return (
     <div className="mx-auto flex h-[75px] max-w-screen-xl items-center justify-between max-xl:px-4">
-      <h1 onClick={handleCloseDrawer} className="text-2xl font-bold uppercase">
-        <Link to={"/"}>Places</Link>
-      </h1>
+      <Link to={"/"}>
+        <h1
+          onClick={handleCloseDrawer}
+          className="font-raleway pl-1 text-3xl font-bold"
+        >
+          Places
+        </h1>
+      </Link>
 
       <nav className="flex items-center gap-8 max-md:hidden">
         <NavLinks handleCloseDrawer={handleCloseDrawer} />

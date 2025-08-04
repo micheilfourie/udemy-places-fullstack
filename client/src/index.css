@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+@theme {
+    --font-raleway: "Raleway", sans-serif;
+    --font-opensans: "Open Sans", sans-serif;
+}
+
 body {
     color:var(--color-neutral-800)
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-raleway);
+    letter-spacing: 0.025em;
+}
+
+p, span, label {
+    font-family: var(--font-opensans);
 }

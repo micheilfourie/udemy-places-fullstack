@@ -6,7 +6,7 @@ const DeleteModal = ({title, handleDeletePlace, handleCloseModal, isModalOpen}) 
     <Modal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal}>
         <div className="fixed top-1/2 left-1/2 z-50 flex w-[90%] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col rounded-lg bg-white p-4">
         <div className="mb-4 w-full text-2xl font-semibold">
-          Delete {title}?
+          Delete {title} ?
         </div>
 
         <p>

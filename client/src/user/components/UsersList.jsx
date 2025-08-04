@@ -3,12 +3,12 @@ import UserItem from "./UserItem";
 const UsersList = ({ users }) => {
   if (users.length === 0) {
     return (
-      <h1 className="text-center text-2xl font-semibold pt-4">No users found</h1>
+      <h1 className="text-center text-xl font-semibold">No users found</h1>
     );
   }
 
   return (
-    <ul className="flex flex-col gap-4">
+    <ul className="flex flex-col divide-y border-y h-full border-neutral-200 divide-neutral-200">
       {users.map((user) => (
         <UserItem
           key={user.id}

@@ -1,7 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-const Button = ({ children, buttonStyle = "default", action = () => {}, link, disabled }) => {
-
+const Button = ({
+  children,
+  buttonStyle = "default",
+  action = () => {},
+  link,
+  disabled,
+  className,
+}) => {
   const navigate = useNavigate();
 
   const dangerStyle =
@@ -14,7 +20,7 @@ const Button = ({ children, buttonStyle = "default", action = () => {}, link, di
   return (
     <button
       onClick={link ? () => navigate(link) : action}
-      className={`flex justify-center items-center ${disabled && "pointer-events-none"} ${buttonStyle === "danger" ? dangerStyle : buttonStyle === "caution" ? cautionStyle : defaultStyle} text-nowrap cursor-pointer rounded-lg px-4 py-2 uppercase transition-all duration-300 ease-in-out`}
+      className={`flex justify-center tracking-wide ${className} items-center ${disabled && "pointer-events-none"} ${buttonStyle === "danger" ? dangerStyle : buttonStyle === "caution" ? cautionStyle : defaultStyle} cursor-pointer rounded-lg px-4 py-2 text-nowrap uppercase transition-all duration-300 ease-in-out`}
     >
       {children}
     </button>

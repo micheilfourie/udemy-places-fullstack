@@ -32,7 +32,7 @@ const UserPlaces = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-[75px]">
+    <div className="min-h-screen bg-gray-200 pt-[75px]">
       {isLoading ? (
         <div className="mt-4 flex w-full items-center justify-center gap-4">
           <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />

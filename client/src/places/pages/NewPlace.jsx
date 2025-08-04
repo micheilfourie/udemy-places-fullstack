@@ -126,7 +126,7 @@ const NewPlace = () => {
       <div
         onDragOver={handleDragOver}
         onDrop={handleDragOver}
-        className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]"
+        className="flex min-h-screen items-center justify-center bg-gray-200 pt-[75px]"
       >
         {isLoading ? (
           <div className="mt-4 flex w-full justify-center gap-4">
@@ -137,7 +137,7 @@ const NewPlace = () => {
             <form
               onSubmit={handleAddPlace}
               action=""
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-6"
             >
               <h1 className="mb-4 text-center text-2xl font-semibold">
                 Add New Place
@@ -164,6 +164,7 @@ const NewPlace = () => {
                     form={placeForm}
                     placeholder="Enter Address"
                   />
+
                   <div>
                     <span
                       onClick={handleToggleCoordinates}
@@ -214,7 +215,7 @@ const NewPlace = () => {
                 form={placeForm}
               />
 
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className={"mt-4"}>Submit</Button>
             </form>
           </div>
         )}

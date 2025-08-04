@@ -94,7 +94,7 @@ const UpdatePlace = () => {
     <>
       <ErrorModal error={error} handleCloseModal={handleCloseModal} />
 
-      <div className="flex min-h-screen items-center justify-center bg-gray-100 pt-[75px]">
+      <div className="flex min-h-screen items-center justify-center bg-gray-200 pt-[75px]">
         {isLoading ? (
           <div>
             <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
@@ -104,7 +104,7 @@ const UpdatePlace = () => {
             <form
               onSubmit={handleEditPlace}
               action=""
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-6"
             >
               <h1 className="mb-4 text-center text-2xl font-semibold">
                 Edit Place
@@ -126,7 +126,7 @@ const UpdatePlace = () => {
                 form={updatePlaceForm}
               />
 
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className={"mt-4"}>Submit</Button>
             </form>
           </div>
         )}
