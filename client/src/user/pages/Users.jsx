@@ -88,6 +88,15 @@ const Users = () => {
     setCurrentPage(1);
   };
 
+  const handleClearFilter = (e) => {
+    e.preventDefault();
+    setFilters({ name: "" });
+    setCurrentPage(1);
+    setPlaceFilterChecked(false);
+    setPlaces(0);
+    setName("");
+  };
+
   const generatePagination = () => {
     let paginationArr = [];
 
@@ -96,11 +105,31 @@ const Users = () => {
         <button
           key={`page-${i}`}
           onClick={() => setCurrentPage(i)}
-          className={`w-12 cursor-pointer rounded-lg px-4 py-2 ${i === currentPage ? "bg-neutral-600 text-white" : "border border-neutral-200 bg-neutral-100"}`}
+          className={`w-12 cursor-pointer rounded-lg px-4 py-2 ${i === currentPage ? "border border-neutral-600 bg-neutral-600 text-white" : "border border-neutral-200 bg-neutral-100"}`}
         >
           {i}
         </button>,
       );
+    }
+
+    if (totalPages > 3) {
+      if (currentPage === 1) {
+        paginationArr = paginationArr.slice(0, 3);
+        paginationArr.push(<span key="ellipsis-right">...</span>);
+      } else if (currentPage === totalPages) {
+        paginationArr = paginationArr.slice(-3);
+        paginationArr.unshift(<span key="ellipsis-left">...</span>);
+      } else {
+        paginationArr = paginationArr.slice(currentPage - 2, currentPage + 1);
+        if (currentPage !== 2 && currentPage !== totalPages - 1) {
+          paginationArr.unshift(<span key="ellipsis-left">...</span>);
+          paginationArr.push(<span key="ellipsis-right">...</span>);
+        } else if (currentPage === 2) {
+          paginationArr.push(<span key="ellipsis-right">...</span>);
+        } else if (currentPage === totalPages - 1) {
+          paginationArr.unshift(<span key="ellipsis-left">...</span>);
+        }
+      }
     }
 
     return paginationArr;
@@ -136,7 +165,7 @@ const Users = () => {
                 <input
                   type="checkbox"
                   onChange={handleCheckToggle}
-                  value={placeFilterChecked}
+                  checked={placeFilterChecked}
                   className="h-6 w-6 cursor-pointer outline-0"
                 />
 
@@ -159,7 +188,12 @@ const Users = () => {
                 </div>
               </div>
 
-              <Button type="submit">Filter</Button>
+              <div className="flex flex-col gap-2">
+                <Button type="submit">Filter</Button>
+                {(filters.name !== "" || filters.places !== undefined) && (
+                  <Button action={handleClearFilter}>Clear Filters</Button>
+                )}
+              </div>
 
               <div className="pb-4">
                 <label htmlFor="">Users per page: </label>
@@ -188,32 +222,34 @@ const Users = () => {
           </div>
         </div>
 
-        <div
-          className={`flex flex-col gap-2 rounded-lg bg-white py-4 shadow-sm`}
-        >
-          {isLoading ? (
-            <>
-              <div className="my-2 px-8">
-                <h1 className="text-xl font-semibold">All Users</h1>
-              </div>
-              <div className="mt-4 flex w-full justify-center gap-4">
-                <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="my-2 flex items-center justify-between px-8">
-                <h1 className="text-xl font-semibold">All Users</h1>
-                <p className="text-neutral-500">{filterMessage}</p>
-              </div>
-              <UsersList users={userList} />
-              <div
-                className={`mt-2 flex items-center justify-center gap-2 ${userList.length === 0 ? "hidden" : ""}`}
-              >
-                {generatePagination()}
-              </div>
-            </>
-          )}
+        <div>
+          <div
+            className={`flex flex-col gap-2 rounded-lg bg-white py-4 shadow-sm`}
+          >
+            {isLoading ? (
+              <>
+                <div className="my-2 px-8">
+                  <h1 className="text-xl font-semibold">All Users</h1>
+                </div>
+                <div className="mt-4 flex w-full justify-center gap-4">
+                  <LoadingSpinner size={40} color={"oklch(26.9% 0 0)"} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="my-2 flex items-center justify-between px-8">
+                  <h1 className="text-xl font-semibold">All Users</h1>
+                  <p className="text-neutral-500">{filterMessage}</p>
+                </div>
+                <UsersList users={userList} />
+                <div
+                  className={`mt-2 flex items-end justify-center gap-2 ${userList.length === 0 ? "hidden" : ""}`}
+                >
+                  {generatePagination()}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

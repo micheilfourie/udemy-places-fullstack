@@ -7,7 +7,7 @@ const NavLinks = ({ direction = "row", handleCloseDrawer }) => {
 
   return (
     <ul
-      className={`flex ${direction === "row" ? "flex-row" : "flex-col"} gap-4`}
+      className={`flex ${direction === "row" ? "flex-row" : "flex-col justify-center items-center"} gap-4`}
     >
       <li>
         <NavLink

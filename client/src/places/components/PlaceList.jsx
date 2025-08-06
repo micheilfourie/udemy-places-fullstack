@@ -11,7 +11,7 @@ const PlaceList = ({ items, setLoadedPlaces, userId }) => {
 
   if (items.length === 0 && !isLoggedIn) {
     return (
-      <h1 className="pt-4 text-center text-2xl font-semibold">
+      <h1 className="text-center text-xl font-semibold pt-4">
         No places found
       </h1>
     );
