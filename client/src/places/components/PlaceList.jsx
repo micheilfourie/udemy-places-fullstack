@@ -9,9 +9,9 @@ const PlaceList = ({ items, setLoadedPlaces, userId }) => {
 
   const navigate = useNavigate();
 
-  if (items.length === 0 && !isLoggedIn) {
+  if ((items.length === 0 && !isLoggedIn) || userState.userId !== userId) {
     return (
-      <h1 className="text-center text-xl font-semibold pt-4">
+      <h1 className="pt-4 text-center text-xl font-semibold">
         No places found
       </h1>
     );
@@ -36,7 +36,7 @@ const PlaceList = ({ items, setLoadedPlaces, userId }) => {
 
         {isLoggedIn && userState.userId === userId && (
           <li>
-            <AddPlaceSkeleton action = {() => navigate("/places/new")}/>
+            <AddPlaceSkeleton action={() => navigate("/places/new")} />
           </li>
         )}
       </ul>
