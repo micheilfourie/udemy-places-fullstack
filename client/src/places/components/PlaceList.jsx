@@ -9,7 +9,7 @@ const PlaceList = ({ items, setLoadedPlaces, userId }) => {
 
   const navigate = useNavigate();
 
-  if ((items.length === 0 && !isLoggedIn) || userState.userId !== userId) {
+  if ((items.length === 0 && !isLoggedIn) || (userState.userId !== userId && isLoggedIn)) {
     return (
       <h1 className="pt-4 text-center text-xl font-semibold">
         No places found

@@ -245,7 +245,9 @@ const Users = () => {
                 <div
                   className={`mt-2 flex items-end justify-center gap-2 ${userList.length === 0 ? "hidden" : ""}`}
                 >
+                  {currentPage !== 1 && <button onClick={() => setCurrentPage(currentPage - 1)} className="cursor-pointer rounded-lg p-2 border border-neutral-200 bg-neutral-100">{"<"}</button>}
                   {generatePagination()}
+                  {currentPage !== totalPages && <button onClick={() => setCurrentPage(currentPage + 1)} className="cursor-pointer rounded-lg p-2 border border-neutral-200 bg-neutral-100">{">"}</button>}
                 </div>
               </>
             )}
